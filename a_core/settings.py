@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'admin_honeypot',
     'django_htmx',
     # own apps
+    'a_products',
 
 ]
 
