@@ -11,13 +11,11 @@
     <script defer src="{% static 'js/htmx.min.js' %}"></script>
     {% django_htmx_script %}
     <link rel="stylesheet" href="{% if debug %}{% static 'css/style.css' %}{% else %}{% static 'css/style.min.css' %}{% endif %}">
+    {% block extra_head %}{% endblock %}
 </head>
-<body class="prose">
+<body class="flex flex-col min-h-screen bg-base-100 text-base-content">
 
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
+    {% block body %}{% endblock %}
 
     <!-- CSRF script for HTMX -->
     <script>
@@ -25,5 +23,6 @@
             event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
         });
     </script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

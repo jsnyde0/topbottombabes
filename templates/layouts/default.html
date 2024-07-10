@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <header class="bg-primary text-primary-content shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <h1 class="text-3xl font-bold">TopBottomBabes</h1>
+            <nav class="mt-4">
+                <ul class="flex space-x-4">
+                    <li><a href="{% url 'products:home' %}" class="hover:text-secondary">Home</a></li>
+                    {% block extra_nav %}{% endblock %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-neutral text-neutral-content">
+        <div class="container mx-auto px-4 py-6 text-center">
+            <p>&copy; {% now "Y" %} TopBottomBabes. All rights reserved.</p>
+        </div>
+    </footer>
+{% endblock %}

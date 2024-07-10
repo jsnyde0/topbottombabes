@@ -1,19 +1,18 @@
-{% extends 'base.html' %}
+{% extends 'layouts/default.html' %}
 
-{% block content%}
-<h1> Hi this is h1 </h1>
-<h2> followed by h2 </h2>
-<h3> followed by h2 </h3>
-<h4> followed by h2 </h4>
-<h5> followed by h2 </h5>
-<h6> followed by h2 </h6>
-<p> followed by paragraph </p>
-Hello these are the products:
-{% for product in products %}
-    {{product}}
-
-And here is a daisyUI button:
-{% endfor %}
-
-<button class="btn btn-primary">Button</button>
+{% block content %}
+<div class="max-w-none">
+    <h2 class="text-2xl font-bold mb-4 text-secondary">Our Products</h2>
+    <ul class="space-y-4">
+        {% for product in products %}
+            <li class="bg-base-200 p-4 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold text-accent">{{ product.name }}</h3>
+                <p class="text-sm text-base-content/70">{{ product.description }}</p>
+                <p class="mt-2 font-bold text-secondary">${{ product.price }}</p>
+            </li>
+        {% empty %}
+            <li class="text-error">No products available.</li>
+        {% endfor %}
+    </ul>
+</div>
 {% endblock %}
