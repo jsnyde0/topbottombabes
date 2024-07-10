@@ -1,0 +1,29 @@
+{% load static %}
+{% load django_htmx %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TopBottomBabes{% endblock %}</title>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/quill/50/bottom.png">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="{% static 'js/htmx.min.js' %}"></script>
+    {% django_htmx_script %}
+    {% comment %} <link rel="stylesheet" href="{% if debug %}{% static 'css/style.css' %}{% else %}{% static 'css/style.min.css' %}{% endif %}"> {% endcomment %}
+</head>
+<body>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- CSRF script for HTMX -->
+    <script>
+        document.body.addEventListener('htmx:configRequest', (event) => {
+            event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+        });
+    </script>
+</body>
+</html>
