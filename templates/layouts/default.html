@@ -1,17 +1,15 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <header>
+    <header class="max-w-7xl mx-auto">
         <c-navbar></c-navbar>
     </header>
 
-    <main class="flex-grow container mx-auto px-4 py-8">
+    <main class="container px-4 py-8 max-w-7xl mx-auto prose">
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="bg-neutral text-neutral-content">
-        <div class="container mx-auto px-4 py-6 text-center">
-            <p>&copy; {% now "Y" %} TopBottomBabes. All rights reserved.</p>
-        </div>
-    </footer>
+    <div class="max-w-7xl mx-auto pt-20">
+        <c-footer/>
+    </div>
 {% endblock %}

@@ -13,11 +13,12 @@
     <link rel="stylesheet" href="{% if debug %}{% static 'css/style.css' %}{% else %}{% static 'css/style.min.css' %}{% endif %}">
     {% block extra_head %}{% endblock %}
 </head>
-<body class="">
+<body>
 
-    <div class="container mx-auto px-4 max-w-5xl">
-        {% block body %}{% endblock %}
+    <div class="bg-base-100">
+    {% block body %}{% endblock %}
     </div>
+    
 
     <!-- CSRF script for HTMX -->
     <script>

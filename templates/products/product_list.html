@@ -1,0 +1,33 @@
+{% extends 'layouts/default.html' %}
+
+{% block content %}
+<h2 class="text-secondary">Our Products</h2>
+
+<div class="max-w-non flex flex-col md:flex-row">
+    <!-- Sidebar -->
+    <div class="w-full md:w-1/4 p-4">
+        <h2 class="text-xl font-bold mb-4">Categories</h2>
+        <ul>
+            <li><a href="{% url 'products:home' %}" class="link {% if not current_category %}font-bold{% endif %}">All Products</a></li>
+            {% for category in categories %}
+                <li><a href="?category={{ category }}" class="link {% if category == current_category %}font-bold{% endif %}">{{ category }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="w-full md:w-3/4 p-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for product in products %}
+                <c-card-product
+                title="{{ product.name }}"
+                description="{{ product.description }}"
+                />
+            {% empty %}
+                <p class="text-error col-span-3">No products available.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
