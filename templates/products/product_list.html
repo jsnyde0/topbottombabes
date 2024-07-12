@@ -1,23 +1,40 @@
 {% extends 'layouts/default.html' %}
 
+{% comment %} {% load partials %} {% endcomment %}
+
 {% block content %}
 <h2 class="text-secondary">Our Products</h2>
 
 <div class="max-w-non flex flex-col md:flex-row">
     <!-- Sidebar -->
     <div class="w-full md:w-1/4 p-4">
-        <h2 class="text-xl font-bold mb-4">Categories</h2>
-        <ul>
-            <li><a href="{% url 'products:home' %}" class="link {% if not current_category %}font-bold{% endif %}">All Products</a></li>
-            {% for category in categories %}
-                <li><a href="?category={{ category }}" class="link {% if category == current_category %}font-bold{% endif %}">{{ category }}</a></li>
-            {% endfor %}
-        </ul>
+        <div class="bg-base-200 rounded-box w-56 p-4">
+            <h2 class="text-xl font-bold mb-4">Category</h2>
+            <form hx-get="{% url 'products:home' %}" 
+                  hx-trigger="change from:.category-toggle" 
+                  hx-target="#product-list" 
+                  hx-push-url="true">
+                {% for category in categories %}
+                <div class="form-control">
+                    <label class="label cursor-pointer">
+                        <span class="label-text">{{ category.name }}</span>
+                        <input type="checkbox" 
+                               class="toggle category-toggle" 
+                               name="category" 
+                               value="{{ category.slug }}"
+                               {% if category.slug in request.GET.category %}checked{% endif %}
+                        />
+                    </label>
+                </div>
+                {% endfor %}
+            </form>
+        </div>
     </div>
 
     <!-- Product Grid -->
     <div class="w-full md:w-3/4 p-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% comment %} {% partialdef product_list inline=True %} {% endcomment %}
             {% for product in products %}
                 <c-card-product
                 title="{{ product.name }}"
@@ -32,6 +49,7 @@
             {% empty %}
                 <p class="text-error col-span-3">No products available.</p>
             {% endfor %}
+            {% comment %} {% endpartialdef %} {% endcomment %}
         </div>
     </div>
 
