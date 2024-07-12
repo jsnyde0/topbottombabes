@@ -19,3 +19,18 @@ def clean_filter_url(request):
             return base_url
     
     return None
+
+def get_search_params(request, valid_params):
+    """
+    Extract and validate search parameters from the request.
+    
+    :param request: The HTTP request object
+    :param valid_params: A list of valid parameter names
+    :return: A dictionary of validated search parameters
+    """
+    return {
+        param: request.GET.get(param)
+        for param in valid_params
+        if request.GET.get(param)
+    }
+

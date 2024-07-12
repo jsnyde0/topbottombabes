@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from django.utils.text import slugify
 
 class Category(models.Model):
@@ -48,6 +49,48 @@ class BodyPart(models.Model):
         self.slug = slugify(self.name)
         super().save(*args, **kwargs)
     
+
+class ProductQuerySet(models.QuerySet):
+    def filter_by_params(self, **params):
+        """
+        Filter products based on the provided parameters.
+        
+        :param params: A dictionary of filter parameters
+        :return: A filtered queryset
+        """
+        filters = Q()
+        for key, values in params.items():
+            if not isinstance(values, list):
+                values = [values]  # Convert single values to a list
+            
+            q_objects = Q()
+            for value in values:
+                if key == 'category':
+                    q_objects |= Q(category__slug=value)
+                elif key == 'purpose':
+                    q_objects |= Q(purpose__slug=value)
+                elif key == 'material':
+                    q_objects |= Q(material__slug=value)
+                elif key == 'body_part':
+                    q_objects |= Q(body_parts__slug=value)
+            
+            filters &= q_objects
+        
+        return self.filter(filters)
+    # def filter_by_params(self, **params):
+    #        filters = Q()
+    #        for key, value in params.items():
+    #            if key == 'category' and value:
+    #                filters &= Q(category__slug=value)
+    #            elif key == 'purpose' and value:
+    #                filters &= Q(purpose__slug=value)
+    #            elif key == 'material' and value:
+    #                filters &= Q(material__slug=value)
+    #            elif key == 'body_part' and value:
+    #                filters &= Q(body_parts__slug=value)
+    #        return self.filter(filters)
+
+
 class Product(models.Model):
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=50, unique=True, editable=False)
@@ -60,6 +103,8 @@ class Product(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    objects = ProductQuerySet.as_manager()
 
     def __str__(self):
         return self.name
