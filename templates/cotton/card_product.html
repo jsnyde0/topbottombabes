@@ -1,18 +1,43 @@
-<div class="card bg-base-200 md:max-w-72 shadow-xl">
-    <figure>
-      <img
-        src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-        alt="Shoes" />
+{% load static %}
+
+<div 
+  class="card bg-base-200 md:max-w-72 shadow-xl transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 cursor-pointer noprose"
+  x-data="{ hover: false }"
+  @mouseenter="hover = true"
+  @mouseleave="hover = false"
+>
+    <figure class="relative overflow-hidden m-0">
+        <img
+        src="{% static 'images/blisswand-1.png' %}"
+        alt="{{ title }}"
+        class="w-full h-full object-cover transition-opacity duration-300"
+        :class="{ 'opacity-0': hover }"
+        />
+        <img
+        src="{% static 'images/blisswand-2.png' %}"
+        alt="{{ title }} (hover)"
+        class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+        :class="{ 'opacity-100': hover, 'opacity-0': !hover }"
+        />
+        {% if is_new %}
+            <div class="absolute top-2 right-2 badge badge-secondary">NEW</div>
+        {% endif %}
     </figure>
     <div class="card-body">
-      <h2 class="card-title">
-        {{ title }}
-        <div class="badge badge-secondary">NEW</div>
-      </h2>
-      <p>{{ description|truncatechars:100 }}</p>
-      <div class="card-actions justify-end">
-        <div class="badge badge-outline">Fashion</div>
-        <div class="badge badge-outline">Products</div>
-      </div>
+        <h2 class="card-title">
+            {{ title }}
+        </h2>
+        <p>{{ description|truncatechars:100 }}</p>
+        <div class="card-actions justify-between items-center mt-2">
+            <div class="text-lg font-bold">${{ price }}</div>
+            {% if category %}
+                <div class="badge badge-outline">{{ category }}</div>
+            {% endif %}
+        </div>
+        <div class="card-actions justify-between items-center -ml-2">
+            <c-rating rating="{{ rating }}" id="{{ product_id }}"/>
+            <p> {{review_count}} reviews </p>
+        </div>
     </div>
+    <div class="absolute inset-0 bg-base-100 opacity-0 hover:opacity-10 transition-opacity duration-300"></div>
 </div>
