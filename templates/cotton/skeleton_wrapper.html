@@ -1,0 +1,8 @@
+<div class="skeleton-wrapper relative">
+    {% comment %} # loading animation {% endcomment %}
+    <div class="skeleton-loader absolute inset-0"></div>
+    {% comment %} # content that you're swapping {% endcomment %}
+    <div class="skeleton-content">
+        {{slot}}
+    </div>
+</div>

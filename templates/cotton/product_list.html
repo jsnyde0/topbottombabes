@@ -1,11 +1,7 @@
 <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     {% comment %} {% partialdef product_list inline=True %} {% endcomment %}
     {% for product in products %}
-        <<div class="skeleton-wrapper relative">
-            {% comment %} # loading animation {% endcomment %}
-            <div class="skeleton-loader absolute inset-0"></div>
-            {% comment %} # content that you're swapping {% endcomment %}
-            <div class="skeleton-content">>
+        <c-skeleton-wrapper>
             <c-card-product
                 title="{{ product.name }}"
                 description="{{ product.description }}"
@@ -16,8 +12,7 @@
                 product_id="{{ product.id }}"
                 review_count="16"
                 />
-            </div>
-        </div>
+        </c-skeleton-wrapper>
     {% empty %}
         <p class="text-error col-span-3">No products available.</p>
     {% endfor %}
