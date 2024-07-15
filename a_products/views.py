@@ -24,3 +24,11 @@ def view_list(request):
             'body_parts': BodyPart.objects.all(),
         })
     return render(request, 'products/product_list.html', context)
+
+def view_product(request, slug):
+    product = Product.objects.get(slug=slug)
+    context = {'product': product}
+
+    if request.htmx:
+        return render(request, 'products/product_detail_content.html', context)    
+    return render(request, 'products/product_detail.html', context)

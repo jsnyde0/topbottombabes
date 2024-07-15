@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Q
 from django.utils.text import slugify
+from django.urls import reverse
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -77,19 +78,6 @@ class ProductQuerySet(models.QuerySet):
             filters &= q_objects
         
         return self.filter(filters)
-    # def filter_by_params(self, **params):
-    #        filters = Q()
-    #        for key, value in params.items():
-    #            if key == 'category' and value:
-    #                filters &= Q(category__slug=value)
-    #            elif key == 'purpose' and value:
-    #                filters &= Q(purpose__slug=value)
-    #            elif key == 'material' and value:
-    #                filters &= Q(material__slug=value)
-    #            elif key == 'body_part' and value:
-    #                filters &= Q(body_parts__slug=value)
-    #        return self.filter(filters)
-
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
@@ -112,3 +100,7 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse("products:view_product", kwargs={"slug": self.slug})
+    

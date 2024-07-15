@@ -22,4 +22,5 @@ app_name = 'products'
 
 urlpatterns = [
     path('', views.view_list, name='home'),
+    path('products/<slug:slug>/', views.view_product, name='view_product'),
 ]

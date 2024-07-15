@@ -1,21 +1,25 @@
 {% load static %}
 
-<div 
+<a 
   class="card bg-base-200 md:max-w-72 shadow-xl transition-all duration-300 ease-in-out hover:shadow-2xl cursor-pointer noprose"
   x-data="{ hover: false }"
   @mouseenter="hover = true"
   @mouseleave="hover = false"
+  href="{{ product.get_absolute_url }}"
+  hx-get="{{ product.get_absolute_url }}"
+  hx-target="#main-content"
+  hx-push-url="true"
 >
     <figure class="relative overflow-hidden m-0">
         <img
         src="{% static 'images/blisswand-1.png' %}"
-        alt="{{ title }}"
+        alt="{{ product.title }}"
         class="w-full h-full object-cover transition-opacity duration-300"
         :class="{ 'opacity-0': hover }"
         />
         <img
         src="{% static 'images/blisswand-2.png' %}"
-        alt="{{ title }} (hover)"
+        alt="{{ product.title }} (hover)"
         class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
         :class="{ 'opacity-100': hover, 'opacity-0': !hover }"
         />
@@ -25,19 +29,19 @@
     </figure>
     <div class="card-body">
         <h2 class="card-title">
-            {{ title }}
+            {{ product.title }}
         </h2>
-        <p>{{ description|truncatechars:100 }}</p>
+        <p>{{ product.description|truncatechars:100 }}</p>
         <div class="card-actions justify-between items-center mt-2">
-            <div class="text-lg font-bold">&#8364;{{ price }}</div>
+            <div class="text-lg font-bold">&#8364;{{ product.price }}</div>
             {% if category %}
-                <div class="badge badge-outline">{{ category }}</div>
+                <div class="badge badge-outline">{{ product.category }}</div>
             {% endif %}
         </div>
         <div class="card-actions justify-between items-center -ml-2">
-            <c-rating rating="{{ rating }}" id="{{ product_id }}"/>
+            <c-rating rating="{{ rating }}" id="{{ product.id }}"/>
             <p> {{review_count}} reviews </p>
         </div>
     </div>
     <div class="absolute inset-0 bg-base-100 opacity-0 hover:opacity-10 transition-opacity duration-300"></div>
-</div>
+</a>

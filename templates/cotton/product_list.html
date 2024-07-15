@@ -3,15 +3,10 @@
     {% for product in products %}
         <c-skeleton-wrapper>
             <c-card-product
-                title="{{ product.name }}"
-                description="{{ product.description }}"
-                category="{{ product.category }}"
-                price="{{ product.price }}"
-                is_new="{{ product.is_new }}"
-                rating="2"
-                product_id="{{ product.id }}"
-                review_count="16"
-                />
+            :product="product"    
+            rating="2"
+            review_count="16"
+            />
         </c-skeleton-wrapper>
     {% empty %}
         <p class="text-error col-span-3">No products available.</p>
