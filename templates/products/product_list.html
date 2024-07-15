@@ -12,7 +12,8 @@
             <h2 class="text-xl font-bold mb-4">Category</h2>
             <form hx-get="{% url 'products:home' %}" 
                   hx-trigger="change from:.category-toggle" 
-                  hx-target="#product-list" 
+                  hx-target="#product-list"
+                  hx-swap="outerHTML" 
                   hx-push-url="true">
                 {% for category in categories %}
                 <div class="form-control">
@@ -33,8 +34,9 @@
 
     <!-- Product Grid -->
     <div class="w-full md:w-3/4 p-4">
-        <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {% comment %} {% partialdef product_list inline=True %} {% endcomment %}
+        <c-product-list/>
+        {% comment %} <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% partialdef product_list inline=True %}
             {% for product in products %}
                 <c-card-product
                 title="{{ product.name }}"
@@ -49,8 +51,8 @@
             {% empty %}
                 <p class="text-error col-span-3">No products available.</p>
             {% endfor %}
-            {% comment %} {% endpartialdef %} {% endcomment %}
-        </div>
+            {% endpartialdef %}
+        </div> {% endcomment %}
     </div>
 
 </div>

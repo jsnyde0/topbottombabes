@@ -17,6 +17,6 @@ def view_list(request):
         'body_parts': BodyPart.objects.all(),
     }
     
-    # if request.htmx:
-    #     return render(request, 'products/product_list.html#product_list', context)
+    if request.htmx:
+        return render(request, 'cotton/product_list.html', context)
     return render(request, 'products/product_list.html', context)
