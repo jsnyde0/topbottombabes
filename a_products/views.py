@@ -8,7 +8,6 @@ logger = logging.getLogger(__name__)
 def view_list(request):
     # use custom 'filter_by_params' to filter the products on request.GET search parameters
     products = Product.objects.filter_by_params(**request.GET)
-    print('Products count: ', products.count())
 
     context = {'products': products}
     
