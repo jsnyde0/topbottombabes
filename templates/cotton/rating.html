@@ -1,13 +1,11 @@
-<div x-data="{ rating: {{ rating|default:0 }}, hoverRating: 0, id: '{{ id|default:'default' }}' }" class="rating rating-sm rating-half">
-    <template x-for="i in 10" :key="i">
-      <input type="radio"
-             :name="'rating-' + id"
-             :class="{'mask mask-star-2 mask-half-1 bg-green-500': i % 2 !== 0, 'mask mask-star-2 mask-half-2 bg-green-500': i % 2 === 0}"
-             :checked="Math.ceil(rating * 2) === i"
-             @mouseenter="hoverRating = i / 2"
-             @mouseleave="hoverRating = 0"
-             @click="rating = i / 2"
-             :style="hoverRating >= i / 2 || rating >= i / 2 ? 'color: #ffb700' : ''"
-      />
-    </template>
+<div x-data="{ rating: {{ rating|default:0 }}, id: '{{ id|default:'default' }}' }" class="rating rating-sm rating-half">
+  <template x-for="i in 10" :key="i">
+    <input type="radio"
+           :name="'rating-' + id"
+           :class="{'mask mask-star-2 mask-half-1 bg-green-500': i % 2 !== 0, 'mask mask-star-2 mask-half-2 bg-green-500': i % 2 === 0}"
+           :checked="Math.ceil(rating * 2) === i"
+           :style="rating >= i / 2 ? 'opacity: 1' : 'opacity: 0.3'"
+           disabled
+    />
+  </template>
 </div>
