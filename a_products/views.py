@@ -9,14 +9,16 @@ def view_list(request):
     products = Product.objects.filter_by_params(**request.GET)
     print('Products count: ', products.count())
 
-    context = {
-        'products': products,
-        'categories': Category.objects.all(),
-        'purposes': Purpose.objects.all(),
-        'materials': Material.objects.all(),
-        'body_parts': BodyPart.objects.all(),
-    }
+    context = {'products': products}
     
     if request.htmx:
         return render(request, 'cotton/product_list.html', context)
+    
+    # if it's not an HTMX request, we also have to get the categories, materials etc to render the whole page
+    context.update({
+            'categories': Category.objects.all(),
+            'purposes': Purpose.objects.all(),
+            'materials': Material.objects.all(),
+            'body_parts': BodyPart.objects.all(),
+        })
     return render(request, 'products/product_list.html', context)
