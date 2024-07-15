@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import Product, Category, Purpose, Material, BodyPart
 import logging
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -11,6 +12,8 @@ def view_list(request):
 
     context = {'products': products}
     
+    time.sleep(1)
+
     if request.htmx:
         return render(request, 'cotton/product_list.html', context)
     

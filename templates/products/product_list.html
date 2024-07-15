@@ -14,13 +14,14 @@
                   hx-trigger="change from:.category-toggle" 
                   hx-target="#product-list"
                   hx-swap="outerHTML" 
-                  hx-push-url="true">
+                  hx-push-url="true"
+                  hx-indicator=".skeleton-loader">
                 {% for category in categories %}
                 <div class="form-control">
                     <label class="label cursor-pointer">
                         <span class="label-text">{{ category.name }}</span>
                         <input type="checkbox" 
-                               class="toggle category-toggle" 
+                               class="toggle category-toggle toggle-xs" 
                                name="category" 
                                value="{{ category.slug }}"
                                {% if category.slug in request.GET.category %}checked{% endif %}
@@ -35,24 +36,6 @@
     <!-- Product Grid -->
     <div class="w-full md:w-3/4 p-4">
         <c-product-list/>
-        {% comment %} <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {% partialdef product_list inline=True %}
-            {% for product in products %}
-                <c-card-product
-                title="{{ product.name }}"
-                description="{{ product.description }}"
-                category="{{ product.category }}"
-                price="{{ product.price }}"
-                is_new="{{ product.is_new }}"
-                rating="2"
-                product_id="{{ product.id }}"
-                review_count="16"
-                />
-            {% empty %}
-                <p class="text-error col-span-3">No products available.</p>
-            {% endfor %}
-            {% endpartialdef %}
-        </div> {% endcomment %}
     </div>
 
 </div>
