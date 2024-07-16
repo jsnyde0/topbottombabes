@@ -55,7 +55,10 @@
                             <span class="title-font font-medium text-2xl">&#8364; {{ item.get_total_price }}</span>
                         </th>
                         <td>
-                            <form method="post" action="{% url 'cart:remove_from_cart' %}">
+                            <form method="post" action="{% url 'cart:remove_from_cart' %}"
+                            hx-post="{% url 'cart:remove_from_cart' %}"
+                            hx-target="#cart-content"
+                            hx-swap="outerHTML">
                                 {% csrf_token %}
                                 <input type="hidden" name="product_id" value="{{ item.product.id }}">
                                 <button type="submit" class="btn btn-ghost btn-sm">
@@ -66,12 +69,16 @@
                             </form>
                         </td>
                     </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">Your cart is empty</td>
+                    </tr>
                 {% endfor %}
             </tbody>
             <!-- foot -->
             <tfoot>
                 <tr>
-                    <th></th>
+                    <th>TOTAL</th>
                     <th></th>
                     <th>{{ cart.get_num_items }}</th>
                     <th>&#8364; {{ cart.get_total_price }}</th>

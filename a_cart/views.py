@@ -20,7 +20,14 @@ def add_to_cart(request):
     return render(request, 'cart/cart.html', {'error': 'Invalid product or quantity'})
 
 def remove_from_cart(request):
-    pass
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        cart.remove_product(product_id)
+        if request.htmx:
+            return render(request, 'cart/cart_content.html', {'cart': cart})
+        return render(request, 'cart/cart.html', {'cart': cart})
+    return render(request, 'cart/cart.html', {'error': 'Invalid product'})
 
 def update_quantity(request):
     cart, created = Cart.objects.get_or_create(user=request.user)
