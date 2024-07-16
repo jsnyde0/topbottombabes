@@ -38,7 +38,10 @@
                 </div> {% endcomment %}
               </div>
               <div class="flex items-center">
-                <form method="post" action="{% url 'cart:add_to_cart' %}" class="flex items-center">
+                <form method="post" action="{% url 'cart:add_to_cart' %}" class="flex items-center"
+                hx-post="{% url 'cart:add_to_cart' %}"
+                hx-target="#main-content"
+                hx-push-url="true">
                   {% csrf_token %}
                   <input type="hidden" name="product_id" value="{{ product.id }}">
                   <label for="quantity" class="mr-3 text-sm font-medium">Quantity</label>

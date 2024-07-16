@@ -16,6 +16,8 @@ def add_to_cart(request):
             cart, created = Cart.objects.get_or_create(user=request.user)
             product = Product.objects.get(id=product_id)
             cart.add_product(product, quantity)
+            if request.htmx:
+                return render(request, 'cart/cart_content.html', {'cart': cart})
             return render(request, 'cart/cart.html', {'cart': cart})
     return render(request, 'cart/cart.html', {'error': 'Invalid product or quantity'})
 
