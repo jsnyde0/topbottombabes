@@ -1,7 +1,7 @@
-from django.test import TestCase, RequestFactory
+from django.test import TestCase, Client
 from django.urls import reverse
 from .models import Product, Category
-from .views import view_list
+from a_cart.models import Cart
 
 class ProductModelTests(TestCase):
     def setUp(self):
@@ -43,44 +43,41 @@ class ProductQuerySetTests(TestCase):
 
 class ProductViewTests(TestCase):
     def setUp(self):
-        self.factory = RequestFactory()
+        self.client = Client()
         self.category = Category.objects.create(name="Test Category")
         self.product = Product.objects.create(name="Test Product", category=self.category, price=15.00)
 
     def test_view_list(self):
-        request = self.factory.get(reverse('products:home'))
-        request.htmx = False
-        response = view_list(request)
+        response = self.client.get(reverse('products:home'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.product.name)
 
     def test_view_list_with_category_filter(self):
-        request = self.factory.get(reverse('products:home'), {'category': self.category.slug})
-        request.htmx = False
-        response = view_list(request)
+        response = self.client.get(reverse('products:home'), {'category': self.category.slug})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.product.name)
-
 
     def test_view_list_htmx(self):
-        request = self.factory.get(reverse('products:home'))
-        request.htmx = True
-        response = view_list(request)
+        response = self.client.get(reverse('products:home'), HTTP_HX_REQUEST='true')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.product.name)
-        self.assertNotContains(response, '<header class="max-w-7xl mx-auto">')  # Check that header is not included
-        
-        # Check for content specific to the HTMX template
+        self.assertNotContains(response, '<header class="max-w-7xl mx-auto">')
         self.assertContains(response, '<div id="product-list"')
-        self.assertNotContains(response, '<html')  # The HTMX response should not include a full HTML document
+        self.assertNotContains(response, '<html')
 
     def test_view_list_htmx_empty_response(self):
-        Category.objects.all().delete()  # Clear all categories
-        Product.objects.all().delete()  # Clear all products
+        Category.objects.all().delete()
+        Product.objects.all().delete()
         
-        request = self.factory.get(reverse('products:home'))
-        request.htmx = True
-        response = view_list(request)
+        response = self.client.get(reverse('products:home'), HTTP_HX_REQUEST='true')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "No products available.")
         self.assertNotContains(response, '<header class="max-w-7xl mx-auto">')
+
+    def test_cart_creation_for_anonymous_user(self):
+        response = self.client.get(reverse('products:home'))
+        self.assertEqual(response.status_code, 200)
+        
+        # Check if a cart was created for the session
+        session_key = self.client.session.session_key
+        self.assertTrue(Cart.objects.filter(session_key=session_key).exists())
