@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.models import AnonymousUser
 from .models import Product, Category, Purpose, Material, BodyPart
 from a_cart.models import Cart
 import logging
@@ -9,7 +10,8 @@ logger = logging.getLogger(__name__)
 def view_list(request):
     # use custom 'filter_by_params' to filter the products on request.GET search parameters
     products = Product.objects.filter_by_params(**request.GET)
-    cart, created = Cart.objects.get_or_create(user=request.user)  
+    cart, created = Cart.get_or_create_cart(request)
+ 
 
     context = {'products': products, 'cart': cart}
     

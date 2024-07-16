@@ -41,6 +41,12 @@ INTERNAL_IPS = (
 
 DEFAULT_CHARSET = 'utf-8'
 
+# Session Handling
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7  # 1 week in seconds
+# Ensure that Django creates a session (and thus a session key) for every request, even for anonymous users
+SESSION_SAVE_EVERY_REQUEST = True
+
 
 # Application definition
 

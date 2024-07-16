@@ -5,9 +5,26 @@ from django.urls import reverse
 
 # Create your models here.
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+    session_key = models.CharField(max_length=40, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'session_key'],
+                name='unique_user_session_cart'
+            )
+        ]
+
+    @classmethod
+    def get_or_create_cart(cls, request):
+        if request.user.is_authenticated:
+            return cls.objects.get_or_create(user=request.user)
+        elif not request.session.session_key:
+            request.session.create()
+        return cls.objects.get_or_create(session_key=request.session.session_key)
 
     def __str__(self):
         return f"{self.user.username}'s cart"
