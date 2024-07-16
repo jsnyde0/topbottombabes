@@ -5,18 +5,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}TopBottomBabes{% endblock %}</title>
+    <meta name="keywords" content="gear, bottoms, fashion, TopBottomBabes">
+    <meta name="description" content="{% block meta_description %}TopBottomBabes - The best gear for your bottoms{% endblock meta_description %}">
+    <title>{% block title %}TopBottomBabes{% endblock title %}</title>
     <link rel="icon" type="image/png" href="https://img.icons8.com/quill/50/bottom.png">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script defer src="{% static 'js/htmx.min.js' %}"></script>
     {% django_htmx_script %}
     <link rel="stylesheet" href="{% if debug %}{% static 'css/style.css' %}{% else %}{% static 'css/style.min.css' %}{% endif %}">
-    {% block extra_head %}{% endblock %}
+    {% block extra_head %}{% endblock extra_head %}
 </head>
 <body>
 
     <div class="bg-base-100">
-    {% block body %}{% endblock %}
+    {% block body %}{% endblock body %}
     </div>
     
 
@@ -26,6 +28,6 @@
             event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
         });
     </script>
-    {% block extra_js %}{% endblock %}
+    {% block extra_js %}{% endblock extra_js %}
 </body>
 </html>

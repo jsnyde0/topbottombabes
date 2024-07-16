@@ -39,6 +39,8 @@ INTERNAL_IPS = (
     'localhost:8000'
 )
 
+DEFAULT_CHARSET = 'utf-8'
+
 
 # Application definition
 
@@ -56,6 +58,7 @@ INSTALLED_APPS = [
     'django_cotton',
     # 'template_partials',
     # own apps
+    'a_core',
     'a_products',
     'a_cart',
 ]

@@ -1,62 +1,72 @@
 <div class="max-w-non flex flex-col md:flex-row">
-    <section class="text-base-content body-font overflow-hidden">
-        <div class="lg:w-4/5 mx-auto flex flex-wrap">
-            <div class="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded overflow-hidden">
-                <c-carousel/>
+  <section class="text-base-content body-font overflow-hidden">
+    <div class="lg:w-4/5 mx-auto flex flex-wrap">
+      <div class="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded overflow-hidden">
+        <c-carousel />
+      </div>
+      <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
+        <h2 class="text-sm font-semibold uppercase text-secondary tracking-widest">TopBottomBabes</h2>
+        <h1 class="text-4xl font-bold mb-1">{{ product.name }}</h1>
+        <div class="flex mb-4">
+          <span class="flex items-center">
+            <c-rating rating="{{ 3.5 }}" id="{{ product.id }}" />
+            <p class="ml-2 text-sm">{{ 16 }} reviews</p>
+          </span>
+          <span class="flex ml-3 pl-3 py-2 border-l-2 border-base-300 space-x-2s">
+            <!-- Social media icons remain unchanged -->
+          </span>
+        </div>
+        <p class="text-base leading-relaxed mb-4">{{ product.description }}</p>
+        <div class="flex mt-6 items-center pb-5 border-b-2 border-base-300 mb-5">
+          <span class="title-font font-medium text-2xl">$58.00</span>
+          {% comment %}
+            <div class="flex items-center">
+              <span class="mr-3 text-sm font-medium">Color</span>
+              <button class="border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none"></button>
+              <button class="border-2 border-gray-300 ml-1 bg-gray-700 rounded-full w-6 h-6 focus:outline-none"></button>
+              <button class="border-2 border-gray-300 ml-1 bg-indigo-500 rounded-full w-6 h-6 focus:outline-none"></button>
             </div>
-            <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
-              <h2 class="text-sm font-semibold uppercase text-secondary tracking-widest">TopBottomBabes</h2>
-              <h1 class="text-4xl font-bold mb-1">{{ product.name }}</h1>
-              <div class="flex mb-4">
-                <span class="flex items-center">
-                    <c-rating rating="{{ 3.5 }}" id="{{ product.id }}"/>
-                    <p class="ml-2 text-sm"> {{ 16 }} reviews </p>
-                </span>
-                <span class="flex ml-3 pl-3 py-2 border-l-2 border-base-300 space-x-2s">
-                  <!-- Social media icons remain unchanged -->
-                </span>
+            <div class="flex ml-6 items-center">
+              <span class="mr-3 text-sm font-medium">Size</span>
+              <div class="relative">
+                <select class="select select-bordered select-sm w-full max-w-xs">
+                  <option>SM</option>
+                  <option>M</option>
+                  <option>L</option>
+                  <option>XL</option>
+                </select>
               </div>
-              <p class="text-base leading-relaxed mb-4">{{ product.description }}</p>
-              <div class="flex mt-6 items-center pb-5 border-b-2 border-base-300 mb-5">
-                <span class="title-font font-medium text-2xl">$58.00</span>
-                {% comment %} <div class="flex items-center">
-                  <span class="mr-3 text-sm font-medium">Color</span>
-                  <button class="border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none"></button>
-                  <button class="border-2 border-gray-300 ml-1 bg-gray-700 rounded-full w-6 h-6 focus:outline-none"></button>
-                  <button class="border-2 border-gray-300 ml-1 bg-indigo-500 rounded-full w-6 h-6 focus:outline-none"></button>
-                </div>
-                <div class="flex ml-6 items-center">
-                  <span class="mr-3 text-sm font-medium">Size</span>
-                  <div class="relative">
-                    <select class="select select-bordered select-sm w-full max-w-xs">
-                      <option>SM</option>
-                      <option>M</option>
-                      <option>L</option>
-                      <option>XL</option>
-                    </select>
-                  </div>
-                </div> {% endcomment %}
-              </div>
-              <div class="flex items-center">
-                <form method="post" action="{% url 'cart:add_to_cart' %}" class="flex items-center"
+            </div>
+          {% endcomment %}
+        </div>
+        <div class="flex items-center">
+          <form method="post"
+                action="{% url 'cart:add_to_cart' %}"
+                class="flex items-center"
                 hx-post="{% url 'cart:add_to_cart' %}"
                 hx-target="#main-content"
                 hx-push-url="true">
-                  {% csrf_token %}
-                  <input type="hidden" name="product_id" value="{{ product.id }}">
-                  <label for="quantity" class="mr-3 text-sm font-medium">Quantity</label>
-                  <input type="number" id="quantity" name="quantity" value="1" min="1" class="input input-bordered input-sm w-16 text-center">
-                  <button type="submit" class="btn btn-primary ml-4">Add to Cart</button>
-                </form>
-                {% comment %} <button class="btn btn-primary ml-auto">Add to Cart</button> {% endcomment %}
-                {% comment %} <button class="btn btn-circle btn-outline ml-4">
-                  <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
-                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
-                  </svg>
-                </button> {% endcomment %}
-              </div>
-            </div>
-          </div>
+            {% csrf_token %}
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+            <label for="quantity" class="mr-3 text-sm font-medium">Quantity</label>
+            <input type="number"
+                   id="quantity"
+                   name="quantity"
+                   value="1"
+                   min="1"
+                   class="input input-bordered input-sm w-16 text-center">
+            <button type="submit" class="btn btn-primary ml-4">Add to Cart</button>
+          </form>
+          {% comment %} <button class="btn btn-primary ml-auto">Add to Cart</button> {% endcomment %}
+          {% comment %}
+            <button class="btn btn-circle btn-outline ml-4">
+              <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
+              </svg>
+            </button>
+          {% endcomment %}
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 </div>
