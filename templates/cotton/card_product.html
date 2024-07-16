@@ -14,14 +14,14 @@
     <figure class="relative overflow-hidden m-0 aspect-square">
         <img
         src="{{ product.get_primary_image.get_url }}"
-        alt="{{ product.title }}"
+        alt="{{ product.name }}"
         class="w-full h-full object-cover object-center transition-opacity duration-300"
         :class="{ 'opacity-0': hover }"
         width="300" height="300"
         />
         <img
         src="{{ product.get_secondary_image.get_url }}"
-        alt="{{ product.title }} (hover)"
+        alt="{{ product.name }} (hover)"
         class="absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-300"
         :class="{ 'opacity-100': hover, 'opacity-0': !hover }"
         width="300" height="300"
@@ -32,7 +32,7 @@
     </figure>
     <div class="card-body">
         <h2 class="card-title">
-            {{ product.title }}
+            {{ product.name }}
         </h2>
         <p>{{ product.description|truncatechars:100 }}</p>
         <div class="card-actions justify-between items-center mt-2">
