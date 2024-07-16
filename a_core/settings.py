@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     # 'template_partials',
     # own apps
     'a_products',
-
+    'a_cart',
 ]
 
 MIDDLEWARE = [

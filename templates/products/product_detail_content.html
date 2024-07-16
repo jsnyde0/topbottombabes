@@ -18,7 +18,8 @@
               </div>
               <p class="text-base leading-relaxed mb-4">{{ product.description }}</p>
               <div class="flex mt-6 items-center pb-5 border-b-2 border-base-300 mb-5">
-                <div class="flex items-center">
+                <span class="title-font font-medium text-2xl">$58.00</span>
+                {% comment %} <div class="flex items-center">
                   <span class="mr-3 text-sm font-medium">Color</span>
                   <button class="border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none"></button>
                   <button class="border-2 border-gray-300 ml-1 bg-gray-700 rounded-full w-6 h-6 focus:outline-none"></button>
@@ -34,16 +35,22 @@
                       <option>XL</option>
                     </select>
                   </div>
-                </div>
+                </div> {% endcomment %}
               </div>
               <div class="flex items-center">
-                <span class="title-font font-medium text-2xl">$58.00</span>
-                <button class="btn btn-primary ml-auto">Add to Cart</button>
-                <button class="btn btn-circle btn-outline ml-4">
+                <form method="post" action="{% url 'cart:add_to_cart' %}" class="flex items-center">
+                  {% csrf_token %}
+                  <input type="hidden" name="product_id" value="{{ product.id }}">
+                  <label for="quantity" class="mr-3 text-sm font-medium">Quantity</label>
+                  <input type="number" id="quantity" name="quantity" value="1" min="1" class="input input-bordered input-sm w-16 text-center">
+                  <button type="submit" class="btn btn-primary ml-4">Add to Cart</button>
+                </form>
+                {% comment %} <button class="btn btn-primary ml-auto">Add to Cart</button> {% endcomment %}
+                {% comment %} <button class="btn btn-circle btn-outline ml-4">
                   <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
                     <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
                   </svg>
-                </button>
+                </button> {% endcomment %}
               </div>
             </div>
           </div>
