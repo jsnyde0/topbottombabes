@@ -25,24 +25,11 @@
                             <div class="flex items-center gap-3">
                                 <div class="avatar">
                                     <div class="mask mask-squircle h-12 w-12">
-                                        <figure class="relative aspect-square overflow-hidden"
-                                                x-data="{ hover: false }"
-                                                @mouseenter="hover = true"
-                                                @mouseleave="hover = false"
-                                                x-cloak>
-                                            <img src="{{ item.product.get_primary_image.get_url }}"
-                                                 alt="{{ item.product.get_primary_image.alt_text }}"
-                                                 class="w-full h-full object-cover object-center transition-opacity duration-300"
-                                                 :class="{ 'opacity-0': hover }"
-                                                 width="{{ width }}"
-                                                 height="{{ height }}" />
-                                            <img src="{{ item.product.get_secondary_image.get_url }}"
-                                                 alt="{{ item.product.get_secondary_image.alt_text }} (hover)"
-                                                 class="absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-300"
-                                                 :class="{ 'opacity-100': hover, 'opacity-0': !hover }"
-                                                 width="{{ width }}"
-                                                 height="{{ height }}" />
-                                        </figure>
+                                        <c-hover-image
+                                        :primary-image="item.product.get_primary_image"
+                                        :secondary-image="item.product.get_secondary_image"
+                                        width="48"
+                                        height="48" />
                                     </div>
                                 </div>
                                 <div>
