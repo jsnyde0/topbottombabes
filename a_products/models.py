@@ -104,6 +104,12 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse("products:view_product", kwargs={"slug": self.slug})
 
+    def get_primary_image(self):
+        return self.images.filter(is_primary=True).first()
+
+    def get_secondary_image(self):
+        return self.images.filter(is_secondary=True).first()
+
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='product_images/')
