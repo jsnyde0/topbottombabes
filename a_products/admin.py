@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Category, Purpose, Material, BodyPart
+from .models import Product, Category, Purpose, Material, BodyPart, ProductImage
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -24,6 +24,12 @@ class BodyPartAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug')
     search_fields = ('name', 'slug')
     readonly_fields = ('slug',)
+
+@admin.register(ProductImage)
+class ProductImageAdmin(admin.ModelAdmin):
+    list_display = ('product', 'image', 'is_primary', 'is_secondary')
+    list_filter = ('is_primary', 'is_secondary', 'product')
+    search_fields = ('product__name',)
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):

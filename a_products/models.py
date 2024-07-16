@@ -103,4 +103,36 @@ class Product(models.Model):
 
     def get_absolute_url(self):
         return reverse("products:view_product", kwargs={"slug": self.slug})
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='product_images/')
+    alt_text = models.CharField(max_length=200, blank=True, help_text="Alternative text for accessibility")
+    is_primary = models.BooleanField(default=False)
+    is_secondary = models.BooleanField(default=False)
+    order = models.PositiveIntegerField(default=0, help_text="Order of appearance")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['order', 'created_at']
+
+    def __str__(self):
+        return f"Image for {self.product.name} - {'Primary' if self.is_primary else 'Secondary' if self.is_secondary else 'Tertiary'}"
+
+    def save(self, *args, **kwargs):
+        if self.is_primary:
+            # Ensure only one primary image per product
+            ProductImage.objects.filter(product=self.product, is_primary=True).update(is_primary=False)
+            self.is_secondary = False
+        if self.is_secondary:
+            # Ensure only one secondary image per product
+            ProductImage.objects.filter(product=self.product, is_secondary=True).update(is_secondary=False)
+            self.is_primary = False
+        super().save(*args, **kwargs)
+
+    @property
+    def get_url(self):
+        return self.image.url if self.image else None
     
