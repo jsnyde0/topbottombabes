@@ -1,3 +1,5 @@
+{% load custom_filters %}
+
 <div class="max-w-non flex flex-col md:flex-row">
   <section class="text-base-content body-font overflow-hidden">
     <div class="lg:w-4/5 mx-auto flex flex-wrap">
@@ -18,7 +20,7 @@
         </div>
         <p class="text-base leading-relaxed mb-4">{{ product.description }}</p>
         <div class="flex mt-6 items-center pb-5 border-b-2 border-base-300 mb-5">
-          <span class="title-font font-medium text-2xl">$58.00</span>
+          <span class="title-font font-medium text-2xl">{{ product.price|euro_symbol }}</span>
           {% comment %}
             <div class="flex items-center">
               <span class="mr-3 text-sm font-medium">Color</span>
