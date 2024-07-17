@@ -34,7 +34,7 @@
         <div class="w-10 rounded-full">
           <img alt="Profile Avatar"
                src="{% if request.user.is_authenticated %}
-               https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg
+               {{ user.profile.get_avatar_url }}
                {% else %}
                {% static 'images/anonymous-avatar.png' %}
                {% endif %}"
@@ -46,7 +46,7 @@
           class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
         <li>
           {% if request.user.is_authenticated %}
-            <a class="justify-between">
+            <a href="{% url 'profiles:view_profile' %}" class="justify-between">
               Profile
               <span class="badge">New</span>
             </a>
