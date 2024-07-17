@@ -1,0 +1,87 @@
+{% extends "layouts/default.html" %}
+{% load i18n %}
+{% load allauth account %}
+{% block title %}
+    {% trans "Sign In" %}
+{% endblock title %}
+{% block content %}
+    {% element h1 %}
+        {% trans "Sign In" %}
+    {% endelement %}
+
+    <div class="flex flex-col gap-4 rounded-box bg-base-200 p-6 max-w-md min-w-[400px]">
+        <h1 class="text-3xl font-bold self-center">Log in</h1>
+    
+        <span class="self-center">
+            Don't have an account?
+            <a class="link link-secondary" href="{% url 'account_signup' %}">Register</a>
+        </span>
+    
+        <form class="flex flex-col gap-4" method="post" action="{% url 'account_login' %}">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-error">
+                    {% for error in form.non_field_errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <label class="form-control">
+                <div class="label">
+                    <span class="label-text">{% trans "E-mail" %}</span>
+                </div>
+                <input type="email" name="login" placeholder="email@example.com" class="input input-bordered" required>
+                {% if form.login.errors %}
+                    <div class="text-error text-sm mt-1">{{ form.login.errors }}</div>
+                {% endif %}
+            </label>
+
+            <label class="form-control">
+                <div class="label">
+                    <span class="label-text">{% trans "Password" %}</span>
+                    <a href="{% url 'account_reset_password' %}" class="label-text link link-accent">{% trans "Forgot Password?" %}</a>
+                </div>
+                <input type="password" name="password" placeholder="••••••••" class="input input-bordered" required>
+                {% if form.password.errors %}
+                    <div class="text-error text-sm mt-1">{{ form.password.errors }}</div>
+                {% endif %}
+            </label>
+
+            {% if form.remember %}
+                <div class="form-control">
+                    <label class="cursor-pointer label self-start gap-2">
+                        <input type="checkbox" name="remember" class="checkbox">
+                        <span class="label-text">{% trans "Remember Me" %}</span>
+                    </label>
+                </div>
+            {% endif %}
+
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+
+            <button class="btn btn-primary" type="submit">{% trans "Sign In" %}</button>
+        </form>
+    </div>
+
+
+    {% element p %}
+        {% blocktranslate %}If you have not created an account yet, then please {{ link }}sign up{{ end_link }} first.{% endblocktranslate %}
+    {% endelement %}
+    {% url 'account_login' as login_url %}
+    {% element form form=form method="post" action=login_url tags="entrance,login" %}
+        {% slot body %}
+            {% csrf_token %}
+            {% element fields form=form unlabeled=True %}
+            {% endelement %}
+            {{ redirect_field }}
+        {% endslot %}
+        {% slot actions %}
+            {% element button type="submit" tags="prominent,login" %}
+                {% trans "Sign In" %}
+            {% endelement %}
+        {% endslot %}
+    {% endelement %}
+{% endblock content %}

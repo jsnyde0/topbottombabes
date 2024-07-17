@@ -24,6 +24,7 @@ urlpatterns = [
 	path('admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
     path('', include('a_products.urls')),
     path('cart/', include('a_cart.urls')),
+    path('accounts/', include('allauth.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
