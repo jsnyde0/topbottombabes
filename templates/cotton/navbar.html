@@ -2,7 +2,10 @@
 {% load static %}
 <div class="navbar bg-base-100">
   <div class="flex-1">
-    <a class="btn btn-ghost text-xl" href="{% url 'products:home' %}">TopBottomBabes</a>
+    <a class="btn btn-ghost text-xl" href="{% url 'products:home' %}">
+      <img alt="Logo" src="{% static 'images/topbottombabes-logo.png' %}" class="w-6" height="32" width="32"/> 
+      TopBottomBabes
+    </a>
   </div>
   <div class="flex-none">
     <div class="dropdown dropdown-end">

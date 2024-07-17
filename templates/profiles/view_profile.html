@@ -1,10 +1,10 @@
 {% extends "layouts/default.html" %}
+{% load static %}
 
 {% block title %}Profile{% endblock title %}
 
 {% block content %}
     <h1>Profile</h1>
-
 
     <div class="drawer lg:drawer-open">
         <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
@@ -17,41 +17,32 @@
         <div class="drawer-side">
           <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label>
             <aside class="flex flex-col items-center h-screen sticky top-0 overflow-y-auto space-y-4 w-72 py-6 px-4 bg-base-200">
-                <!-- Logo -->
-                <a class="btn btn-ghost text-lg">
-                    <img alt="Logo" src="{% static 'images/logo.svg' %}" class="w-6"/> 
-                    TopBottomBabes
-                </a>
             
-                <img alt="Profile" src="/avatar.png" class="w-32 rounded-full"/>
+                <img alt="Profile" src="{{ user.profile.get_avatar_url }}" class="w-32 rounded-full" height=64 width=64/>
             
-                <h2 class="font-bold text-lg">User name</h2>
+                <h2 class="font-bold text-lg">{{ user.profile }}</h2>
             
-                <span class="text-sm text-accent">username@email.com</span>
+                <span class="text-sm text-accent">{{ user.email }}</span>
             
                 <ul class="menu menu-lg w-full">
                     <li>
-                        <a>
-                            <i class="fa-solid fa-inbox fa-fw"></i>
-                            Inbox
-                        </a>
-                    </li>
-                    <li>
                         <a class="active">
-                            <i class="fa-solid fa-user fa-fw"></i>
-                            Accounts
+                            Profiles
                         </a>
                     </li>
                     <li>
                         <a>
-                            <i class="fa-solid fa-ticket fa-fw"></i>
-                            Tickets
+                            Orders
                         </a>
                     </li>
                     <li>
                         <a>
-                            <i class="fa-solid fa-gear fa-fw"></i>
                             Settings
+                        </a>
+                    </li>
+                    <li>
+                        <a onclick="document.getElementById('modal-logout').showModal()">
+                            Logout
                         </a>
                     </li>
                 </ul>
