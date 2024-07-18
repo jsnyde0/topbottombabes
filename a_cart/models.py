@@ -1,7 +1,8 @@
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import User
 from a_products.models import Product
 from django.urls import reverse
+import uuid
 
 # Create your models here.
 class Cart(models.Model):
@@ -20,11 +21,50 @@ class Cart(models.Model):
 
     @classmethod
     def get_or_create_cart(cls, request):
-        if request.user.is_authenticated:
-            return cls.objects.get_or_create(user=request.user)
-        elif not request.session.session_key:
+        """
+        Get an existing cart or create a new one for the given request.
+
+        This method ensures that every request has an associated cart, whether the user
+        is authenticated or not. It prioritizes finding existing carts for authenticated users.
+
+        Args:
+            cls: The Cart class (passed implicitly as this is a class method).
+            request: The HTTP request object.
+
+        Returns:
+            A tuple (Cart, bool) where the boolean indicates whether a new cart was created.
+        """
+        # Ensure the session exists
+        if not request.session.session_key:
             request.session.create()
-        return cls.objects.get_or_create(session_key=request.session.session_key)
+
+        with transaction.atomic():
+            if request.user.is_authenticated:
+                # For authenticated users, first try to get their existing cart
+                cart = cls.objects.filter(user=request.user).first()
+                created = False
+                if cart:
+                    # If we found an existing cart, update its session key
+                    cart.session_key = request.session.session_key
+                    cart.save()
+            else:
+                # For anonymous users, try to get cart by session key or create a new one
+                cart_id = request.session.get('cart_id')
+                if cart_id:
+                    try:
+                        cart = cls.objects.get(id=cart_id, user__isnull=True)
+                        created = False
+                    except cls.DoesNotExist:
+                        cart = cls.objects.create(session_key=request.session.session_key)
+                        created = True
+                else:
+                    cart = cls.objects.create(session_key=request.session.session_key)
+                    created = True
+
+        # Always update the session with the cart ID
+        request.session['cart_id'] = cart.id
+        request.session.modified = True
+        return cart, created
 
     def __str__(self):
         return f"{self.user.username}'s cart" if self.user else f"cart {self.session_key}"
@@ -44,6 +84,10 @@ class Cart(models.Model):
             cart_item.quantity += quantity
             cart_item.save()
         return cart_item
+
+    def merge_with(self, other_cart):
+        for item in other_cart.items.all():
+            self.add_product(item.product, item.quantity)
 
     def update_quantity(self, product_id, quantity):
         cart_item = self.items.get(product_id=product_id)
