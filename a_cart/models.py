@@ -27,7 +27,7 @@ class Cart(models.Model):
         return cls.objects.get_or_create(session_key=request.session.session_key)
 
     def __str__(self):
-        return f"{self.user.username}'s cart"
+        return f"{self.user.username}'s cart" if self.user else f"cart {self.session_key}"
 
     def get_total_price(self):
         return sum(item.get_total_price() for item in self.items.all())

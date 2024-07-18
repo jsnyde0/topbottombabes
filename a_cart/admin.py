@@ -6,7 +6,7 @@ class CartItemInline(admin.TabularInline):
     extra = 1
 
 class CartAdmin(admin.ModelAdmin):
-    list_display = ('user', 'created_at', 'updated_at', 'get_num_items', 'get_total_price')
+    list_display = ('session_key', 'user', 'created_at', 'updated_at', 'get_num_items', 'get_total_price')
     search_fields = ('user__username',)
     inlines = [CartItemInline]
 
