@@ -56,17 +56,17 @@ class UserProfileTests(TestCase):
         self.assertEqual(response.status_code, 200)
         # check the id of the pre-login cart
         cart_id_pre_login = self.client.session['cart_id']
-        logger.debug(f"Pre-login cart ID: {cart_id_pre_login}")
+        # logger.debug(f"Pre-login cart ID: {cart_id_pre_login}")
 
         # check that the pre-login cart has 1 item
         cart_pre_login = Cart.objects.get(id=cart_id_pre_login)
         self.assertEqual(cart_pre_login.items.count(), 1)
-        logger.debug(f"Pre-login cart items count: {cart_pre_login.items.count()}")
-        logger.debug(f"Pre-login cart user: {cart_pre_login.user}")
+        # logger.debug(f"Pre-login cart items count: {cart_pre_login.items.count()}")
+        # logger.debug(f"Pre-login cart user: {cart_pre_login.user}")
 
         # Create user
         user = User.objects.create_user(username='testuser', email='test@example.com', password='testpass123')
-        logger.debug(f"Created user: {user.username}")
+        # logger.debug(f"Created user: {user.username}")
 
         # Simulate login process with a real request
         login_data = {
@@ -75,32 +75,32 @@ class UserProfileTests(TestCase):
         }
         response = self.client.post(reverse('account_login'), login_data, follow=True)
         self.assertEqual(response.status_code, 200)
-        logger.debug(f"Login response status: {response.status_code}")
-        logger.debug(f"Login response redirect chain: {response.redirect_chain}")
+        # logger.debug(f"Login response status: {response.status_code}")
+        # logger.debug(f"Login response redirect chain: {response.redirect_chain}")
 
         # Force session save and refresh
         self.client.session.save()
-        logger.debug(f"Session after login: {dict(self.client.session)}")
+        # logger.debug(f"Session after login: {dict(self.client.session)}")
 
         # Manually call the transfer_cart function
         user_cart = transfer_cart(user, self.client.session)
 
         # Refresh the user instance
         user.refresh_from_db()
-        logger.debug(f"Refreshed user: {user.username}")
+        # logger.debug(f"Refreshed user: {user.username}")
 
         # After login, log all carts in the database
         all_carts = Cart.objects.all()
-        logger.debug(f"All carts after login: {[{cart.id: cart.user} for cart in all_carts]}")
+        # logger.debug(f"All carts after login: {[{cart.id: cart.user} for cart in all_carts]}")
 
         # Check if cart is retained
         try:
             user_cart = Cart.objects.get(user=user)
             n_cart_items = user_cart.items.count()
-            logger.debug(f"User cart found. ID: {user_cart.id}")
-            logger.debug(f"User cart items count: {n_cart_items}")
+            # logger.debug(f"User cart found. ID: {user_cart.id}")
+            # logger.debug(f"User cart items count: {n_cart_items}")
         except Cart.DoesNotExist:
-            logger.error("User cart not found!")
+            # logger.error("User cart not found!")
             user_cart = None
 
         self.assertIsNotNone(user_cart)
@@ -109,9 +109,10 @@ class UserProfileTests(TestCase):
         # Check if old cart still exists
         try:
             old_cart = Cart.objects.get(id=cart_id_pre_login)
-            logger.warning(f"Old cart still exists. ID: {old_cart.id}")
+            # logger.warning(f"Old cart still exists. ID: {old_cart.id}")
         except Cart.DoesNotExist:
-            logger.debug("Old cart successfully deleted")
+            pass
+            # logger.debug("Old cart successfully deleted")
 
         # Ensure old session cart is deleted (trying to get the pre-login cart should raise a Cart.DoesNotExist error)
         with self.assertRaises(Cart.DoesNotExist):
@@ -125,7 +126,7 @@ class UserProfileTests(TestCase):
 
         # Logout and redirect to homepage
         self.client.logout()
-        response = self.client.get(reverse('home'))
+        response = self.client.get(reverse('products:home'))
         self.assertEqual(response.status_code, 200)
 
         # Check if a new cart is created after logout that's empty

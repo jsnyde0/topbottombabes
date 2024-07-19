@@ -13,7 +13,7 @@ def transfer_cart(user, session):
     This function is triggered when a user logs in. It handles various scenarios to ensure
     that the user's cart is properly maintained across sessions.
     """
-    logger.debug(f"transfer_cart_to_authenticated_user called for user: {user.username}")
+    # logger.debug(f"transfer_cart_to_authenticated_user called for user: {user.username}")
     
     with transaction.atomic():
         # First, try to get an existing cart for the user
