@@ -6,21 +6,21 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-@receiver(user_logged_in)
-def transfer_cart_to_authenticated_user(sender, request, user, **kwargs):
+def transfer_cart(user, session):
     """
     Transfer or merge the cart when a user logs in.
 
     This function is triggered when a user logs in. It handles various scenarios to ensure
     that the user's cart is properly maintained across sessions.
     """
+    logger.debug(f"transfer_cart_to_authenticated_user called for user: {user.username}")
     
     with transaction.atomic():
         # First, try to get an existing cart for the user
         user_cart, user_cart_created = Cart.objects.get_or_create(user=user)
 
         # get the cart belonging to the anonymous session (this works because Django migrates the session data from the anonymous session to the authenticated user's session)
-        session_cart_id = request.session.get('cart_id')
+        session_cart_id = session.get('cart_id')
         if session_cart_id:
             try:
                 session_cart = Cart.objects.get(id=session_cart_id)
@@ -39,6 +39,12 @@ def transfer_cart_to_authenticated_user(sender, request, user, **kwargs):
                 logger.warning(f"Cart with id {session_cart_id} not found")
 
     # Always update the session with the user's cart ID
-    request.session['cart_id'] = user_cart.id
-    request.session.modified = True
+    session['cart_id'] = user_cart.id
+    session.modified = True
     logger.info(f"Using cart {user_cart.id} for user {user}")
+
+    return user_cart
+
+@receiver(user_logged_in)
+def transfer_cart_to_authenticated_user(sender, request, user, **kwargs):
+    transfer_cart(user, request.session)
