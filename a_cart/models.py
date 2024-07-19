@@ -7,15 +7,16 @@ import uuid
 # Create your models here.
 class Cart(models.Model):
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
-    session_key = models.CharField(max_length=40, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # ensure that each authenticated user can only have one cart, while still allowing multiple carts without users (for anonymous users)
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'session_key'],
-                name='unique_user_session_cart'
+                fields=['user'],
+                condition=models.Q(user__isnull=False),
+                name='unique_user_cart'
             )
         ]
 
@@ -39,14 +40,14 @@ class Cart(models.Model):
             request.session.create()
 
         with transaction.atomic():
-            # For authenticated users, return their existing cart
+            # For authenticated users, return their existing cart or create a new one
             if request.user.is_authenticated:
-                cart = cls.objects.filter(user=request.user).first()
-                created = False
-                if cart:
-                    # If we found an existing cart, update its session key
-                    cart.session_key = request.session.session_key
-                    cart.save()
+                try:
+                    cart = cls.objects.get(user=request.user)
+                    created = False
+                except cls.DoesNotExist:
+                    cart = cls.objects.create(user=request.user)
+                    created = True
             # For anonymous users, get cart by session key or create a new cart
             else:
                 cart_id = request.session.get('cart_id')
@@ -55,10 +56,10 @@ class Cart(models.Model):
                         cart = cls.objects.get(id=cart_id, user__isnull=True)
                         created = False
                     except cls.DoesNotExist:
-                        cart = cls.objects.create(session_key=request.session.session_key)
+                        cart = cls.objects.create()
                         created = True
                 else:
-                    cart = cls.objects.create(session_key=request.session.session_key)
+                    cart = cls.objects.create()
                     created = True
 
         # Update the session with the cart ID
