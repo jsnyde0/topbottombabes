@@ -14,15 +14,17 @@ def transfer_cart_to_authenticated_user(sender, request, user, **kwargs):
     This function is triggered when a user logs in. It handles various scenarios to ensure
     that the user's cart is properly maintained across sessions.
     """
-    session_cart_id = request.session.get('cart_id')
     
     with transaction.atomic():
         # First, try to get an existing cart for the user
         user_cart, user_cart_created = Cart.objects.get_or_create(user=user)
 
+        # get the cart belonging to the anonymous session (this works because Django migrates the session data from the anonymous session to the authenticated user's session)
+        session_cart_id = request.session.get('cart_id')
         if session_cart_id:
             try:
                 session_cart = Cart.objects.get(id=session_cart_id)
+                # a cart from the anonymous session should not have a user associated with it; in which case we can merge it into the user's cart
                 if session_cart.user is None:
                     # If session cart exists but isn't associated with a user,
                     # merge it into the user's cart and delete the session cart

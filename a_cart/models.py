@@ -39,16 +39,16 @@ class Cart(models.Model):
             request.session.create()
 
         with transaction.atomic():
+            # For authenticated users, return their existing cart
             if request.user.is_authenticated:
-                # For authenticated users, first try to get their existing cart
                 cart = cls.objects.filter(user=request.user).first()
                 created = False
                 if cart:
                     # If we found an existing cart, update its session key
                     cart.session_key = request.session.session_key
                     cart.save()
+            # For anonymous users, get cart by session key or create a new cart
             else:
-                # For anonymous users, try to get cart by session key or create a new one
                 cart_id = request.session.get('cart_id')
                 if cart_id:
                     try:
@@ -61,9 +61,12 @@ class Cart(models.Model):
                     cart = cls.objects.create(session_key=request.session.session_key)
                     created = True
 
-        # Always update the session with the cart ID
-        request.session['cart_id'] = cart.id
-        request.session.modified = True
+        # Update the session with the cart ID
+        session_cart_id = request.session.get('cart_id')
+        if not session_cart_id or session_cart_id != cart.id:
+            request.session['cart_id'] = cart.id
+            request.session.modified = True
+
         return cart, created
 
     def __str__(self):
