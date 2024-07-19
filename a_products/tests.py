@@ -78,6 +78,8 @@ class ProductViewTests(TestCase):
         response = self.client.get(reverse('products:home'))
         self.assertEqual(response.status_code, 200)
         
-        # Check if a cart was created for the session TODO: This will fail because we removed session_key field from Cart!
-        session_key = self.client.session.session_key
-        self.assertTrue(Cart.objects.filter(session_key=session_key).exists())
+        # Check if a cart was created for the session for an anonymous user
+        session_cart_id = self.client.session.get('cart_id')
+        session_cart = Cart.objects.get(id=session_cart_id)
+        self.assertIsNotNone(session_cart)
+        self.assertIsNone(session_cart.user)

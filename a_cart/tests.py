@@ -13,7 +13,7 @@ class CartModelTest(TestCase):
 
     def test_cart_creation(self):
         self.assertTrue(isinstance(self.cart, Cart))
-        self.assertEqual(self.cart.__str__(), "testuser's cart")
+        self.assertEqual(self.cart.__str__(), f"{self.user.username}'s cart {self.cart.id}")
 
     def test_add_product(self):
         self.cart.add_product(self.product, quantity=2)

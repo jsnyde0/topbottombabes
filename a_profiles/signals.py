@@ -23,5 +23,5 @@ def update_user_email(sender, instance, created, **kwargs):
 # signal that deletes the profile when the user is deleted
 @receiver(post_delete, sender=User)
 def delete_profile(sender, instance, **kwargs):
-    Profile.objects.get(user=instance).delete()
+    Profile.objects.filter(user=instance).delete()
 
