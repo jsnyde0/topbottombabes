@@ -1,10 +1,36 @@
 from django.contrib import admin
+from django import forms
 from .models import Order, OrderItem
+from a_products.models import Product
+
+class ProductModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return f"{obj}"
+
+class OrderItemInlineForm(forms.ModelForm):
+    product = ProductModelChoiceField(
+        queryset=Product.objects.all(),
+        widget=admin.widgets.AutocompleteSelect(
+            OrderItem._meta.get_field('product'),
+            admin.site,
+            attrs={'data-placeholder': 'Start typing to search products...'}
+        )
+    )
+
+    class Meta:
+        model = OrderItem
+        fields = '__all__'
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
+    form = OrderItemInlineForm
     extra = 0
     readonly_fields = ('name', 'description', 'price', 'total_price')
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "product":
+            return self.form.base_fields['product']
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):

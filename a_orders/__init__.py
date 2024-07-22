@@ -1,0 +1,1 @@
+default_app_config = 'a_orders.apps.AOrdersConfig'

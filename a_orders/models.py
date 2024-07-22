@@ -62,17 +62,17 @@ class Order(models.Model):
             self.order_number = self.generate_order_number()
         super().save(*args, **kwargs)
     
-    # @property
-    # def compute_total_price(self):
-    #     total = self.items.aggregate(
-    #         total=Sum(F('price') * F('quantity'))
-    #     )['total'] or 0
-    #     return total
+    @property
+    def compute_total_price(self):
+        total = self.items.aggregate(
+            total=Sum(F('price') * F('quantity'))
+        )['total'] or 0
+        return total
 
     def save(self, *args, **kwargs):
         # precompute the total price
-        # if not self.total_price:
-        #     self.total_price = self.compute_total_price
+        if not self.total_price:
+            self.total_price = self.compute_total_price
         # set the order number by getting previous one and incrementing by 1
         if not self.order_number:
             last_order = Order.objects.all().order_by('id').last()
