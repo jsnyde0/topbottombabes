@@ -12,6 +12,7 @@ def checkout(request):
         logger.info(f"Tried checking out without a Cart; redirecting to cart for user {request.user}")
         return redirect('a_cart:view_cart')
     
-    order = Order.create_from_cart(cart)
+    # get or create an order and sync it with the cart
+    order = Order.get_or_create_order(request, sync_with_cart=True)
     context = {'order': order}
     return render(request, 'orders/checkout.html', context)

@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from decimal import Decimal
 from a_products.models import Product
+from a_cart.models import Cart
 
 class Order(models.Model):
     # Status choices
@@ -85,15 +86,14 @@ class Order(models.Model):
             self.compute_total_price()
             super().save(update_fields=['total_price'])
 
-    @classmethod
-    def create_from_cart(cls, cart):
-        order = cls.objects.create(
-            user=cart.user,
-        )
-        
+    def sync_with_cart(self, cart):
+        # Clear existing order items
+        self.items.all().delete()
+
+        # Add items from cart
         for cart_item in cart.items.all():
             OrderItem.objects.create(
-                order=order,
+                order=self,
                 product=cart_item.product,
                 quantity=cart_item.quantity,
                 price=cart_item.product.price,
@@ -101,11 +101,45 @@ class Order(models.Model):
                 description=cart_item.product.description
             )
 
-        # compute and save the total price
-        order.compute_total_price()
-        order.save(update_fields=['total_price'])
+        # Recompute total price
+        self.compute_total_price()
+        self.save(update_fields=['total_price'])
+
+    @classmethod
+    def get_or_create_order(cls, request, sync_with_cart=True):
+        cart, _ = Cart.get_or_create_cart(request)
         
+        
+        if request.user.is_authenticated:
+            # retrieve any 'pending' order for an authenticated user or create one
+            order, created = cls.objects.get_or_create(
+                user=request.user,
+                status='PENDING',
+                defaults={'total_price': Decimal('0.00')}
+            )
+        else:
+            # For anonymous users, we'll use the session to store the order
+            order_id = request.session.get('order_id')
+            if order_id:
+                try:
+                    order = cls.objects.get(id=order_id, status='PENDING')
+                    created = False
+                except cls.DoesNotExist:
+                    order = cls.objects.create(status='PENDING', total_price=Decimal('0.00'))
+                    created = True
+            else:
+                order = cls.objects.create(status='PENDING', total_price=Decimal('0.00'))
+                created = True
+            
+            request.session['order_id'] = order.id
+
+        # sync the order with the cart
+        if sync_with_cart:
+            order.sync_with_cart(cart)
+
         return order
+    
+
 
 
 
