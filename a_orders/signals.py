@@ -8,5 +8,5 @@ def update_order_total(sender, instance, **kwargs):
     Signal to update Order total_price when OrderItems are added, modified, or deleted.
     """
     order = instance.order
-    order.total_price = order.compute_total_price
+    order.compute_total_price()
     order.save()

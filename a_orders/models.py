@@ -31,7 +31,7 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))], null=True, blank=True)
-    payment_method = models.CharField(max_length=20, choices=PAYMENT_CHOICES)
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_CHOICES, null=True, blank=True)
     payment_id = models.CharField(max_length=100, blank=True, null=True)  # For storing payment gateway transaction ID
     
     # Shipping information
@@ -56,33 +56,56 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order {self.order_number}"
-
-    def save(self, *args, **kwargs):
-        if not self.order_number:
-            self.order_number = self.generate_order_number()
-        super().save(*args, **kwargs)
     
-    @property
     def compute_total_price(self):
-        total = self.items.aggregate(
+        # if the order has items, compute the total price
+        self.total_price = self.items.aggregate(
             total=Sum(F('price') * F('quantity'))
-        )['total'] or 0
-        return total
+        )['total'] or Decimal('0.00')
+
+    def set_order_number(self):
+        if self.order_number:
+            return
+        
+        last_order = Order.objects.all().order_by('id').last()
+        if not last_order:
+            self.order_number = '000001'
+        else:
+            last_order_number = int(last_order.order_number)
+            new_order_number = last_order_number + 1
+            self.order_number = f'{new_order_number:06d}'
 
     def save(self, *args, **kwargs):
-        # precompute the total price
-        if not self.total_price:
-            self.total_price = self.compute_total_price
-        # set the order number by getting previous one and incrementing by 1
-        if not self.order_number:
-            last_order = Order.objects.all().order_by('id').last()
-            if not last_order:
-                self.order_number = '000001'
-            else:
-                last_order_number = int(last_order.order_number)
-                new_order_number = last_order_number + 1
-                self.order_number = f'{new_order_number:06d}'
+        is_new = self.pk is None
+        if is_new:
+            self.set_order_number()
         super().save(*args, **kwargs)
+
+        if is_new:
+            self.compute_total_price()
+            super().save(update_fields=['total_price'])
+
+    @classmethod
+    def create_from_cart(cls, cart):
+        order = cls.objects.create(
+            user=cart.user,
+        )
+        
+        for cart_item in cart.items.all():
+            OrderItem.objects.create(
+                order=order,
+                product=cart_item.product,
+                quantity=cart_item.quantity,
+                price=cart_item.product.price,
+                name=cart_item.product.name,
+                description=cart_item.product.description
+            )
+
+        # compute and save the total price
+        order.compute_total_price()
+        order.save(update_fields=['total_price'])
+        
+        return order
 
 
 

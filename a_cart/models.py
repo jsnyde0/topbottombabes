@@ -71,7 +71,7 @@ class Cart(models.Model):
         return cart, created
 
     def __str__(self):
-        return f"{self.user.username}'s cart {self.id}" if self.user else f"Anonymous cart {self.id}"
+        return f"{self.user}'s cart {self.id}" if self.user else f"Anonymous cart {self.id}"
 
     def get_total_price(self):
         return sum(item.get_total_price() for item in self.items.all())
