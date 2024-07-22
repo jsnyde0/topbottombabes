@@ -3,7 +3,7 @@ from django.db.models import Sum, F
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from decimal import Decimal
-
+from a_products.models import Product
 
 class Order(models.Model):
     # Status choices
@@ -84,6 +84,46 @@ class Order(models.Model):
                 self.order_number = f'{new_order_number:06d}'
         super().save(*args, **kwargs)
 
-    # def save(self, *args, **kwargs):
-    #     
-    #     super().save(*args, **kwargs)
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    quantity = models.PositiveIntegerField(default=1)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    # Additional fields
+    name = models.CharField(max_length=255, blank=True, null=False)  # Store the product name at the time of purchase
+    description = models.TextField(blank=True, null=True)  # Store a brief description
+            
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"{self.quantity} x {self.name} in Order {self.order.order_number}"
+
+    @property
+    def total_price(self):
+        if self.quantity is not None and self.price is not None:
+            return self.quantity * self.price
+        return None
+
+    def save(self, *args, **kwargs):
+        if self.product:
+            # Update fields based on the current product state
+            self.name = self.product.name
+            self.description = self.product.description
+            
+            if self.price is None:
+                self.price = self.product.price
+        super().save(*args, **kwargs)
+
+    # def apply_discount(self, amount=None, percentage=None):
+    #     if amount:
+    #         self.discount_amount = amount
+    #     elif percentage:
+    #         self.discount_percentage = percentage
+    #     self.save()
