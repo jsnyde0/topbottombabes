@@ -12,7 +12,7 @@ class Address(models.Model):
     type = models.CharField(max_length=20, choices=TYPE_CHOICES)
     street = models.CharField(max_length=255)
     city = models.CharField(max_length=100)
-    state = models.CharField(max_length=100)
+    state = models.CharField(max_length=100, blank=True, null=True)
     country = models.CharField(max_length=100)
     zip_code = models.CharField(max_length=20)
     default = models.BooleanField(default=False)

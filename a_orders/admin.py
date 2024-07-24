@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django import forms
-from .models import Order, OrderItem
+from .models import Order, OrderItem, Address
 from a_products.models import Product
 
 class ProductModelChoiceField(forms.ModelChoiceField):
@@ -64,3 +64,20 @@ class OrderItemAdmin(admin.ModelAdmin):
     list_filter = ('order__status', 'created_at')
     search_fields = ('order__order_number', 'product__name', 'name')
     readonly_fields = ('name', 'description', 'price', 'total_price')
+
+@admin.register(Address)
+class AddressAdmin(admin.ModelAdmin):
+    list_display = ('user', 'type', 'street', 'city', 'state', 'country', 'zip_code', 'default')
+    list_filter = ('type', 'country', 'default')
+    search_fields = ('user__username', 'street', 'city', 'state', 'country', 'zip_code')
+    raw_id_fields = ('user',)
+    list_editable = ('default',)
+
+    fieldsets = (
+        (None, {
+            'fields': ('user', 'type', 'default')
+        }),
+        ('Address Details', {
+            'fields': ('street', 'city', 'state', 'country', 'zip_code')
+        }),
+    )
