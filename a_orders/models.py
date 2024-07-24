@@ -81,7 +81,7 @@ class Order(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"Order {self.order_number}"
+        return f"Order {self.id} by {self.user or 'Anonymous'}"
     
     def compute_total_price(self):
         # if the order has items, compute the total price
@@ -131,7 +131,7 @@ class Order(models.Model):
         self.save(update_fields=['total_price'])
 
     @classmethod
-    def get_or_create_order(cls, request, sync_with_cart=True):
+    def create_order_from_request(cls, request, sync_with_cart=True, shipping_address=None, billing_address=None):
         cart, _ = Cart.get_or_create_cart(request)
         
         
@@ -161,6 +161,14 @@ class Order(models.Model):
         # sync the order with the cart
         if sync_with_cart:
             order.sync_with_cart(cart)
+
+        if shipping_address:
+            order.shipping_address = shipping_address
+            order.save()
+        
+        if billing_address:
+            order.billing_address = billing_address
+            order.save()
 
         return order
     

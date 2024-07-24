@@ -13,6 +13,6 @@ def checkout(request):
         return redirect('cart:view_cart')
     
     # get or create an order and sync it with the cart
-    order = Order.get_or_create_order(request, sync_with_cart=True)
+    order = Order.create_order_from_request(request, sync_with_cart=True)
     context = {'order': order}
     return render(request, 'orders/checkout.html', context)
