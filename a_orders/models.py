@@ -6,6 +6,35 @@ from decimal import Decimal
 from a_products.models import Product
 from a_cart.models import Cart
 
+class Address(models.Model):
+    TYPE_CHOICES = [('SHIPPING', 'Shipping'), ('BILLING', 'Billing')]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    type = models.CharField(max_length=20, choices=TYPE_CHOICES)
+    street = models.CharField(max_length=255)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    zip_code = models.CharField(max_length=20)
+    default = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ['user', 'type', 'default']
+
+    def save(self, *args, **kwargs):
+        if self.default:
+            # Set all other addresses of this type for this user to non-default
+            Address.objects.filter(user=self.user, type=self.type).update(default=False)
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_default(cls, user, address_type):
+        return cls.objects.filter(user=user, type=address_type, default=True).first()
+
+    @classmethod
+    def set_default(cls, address_id, user, address_type):
+        cls.objects.filter(user=user, type=address_type).update(default=False)
+        cls.objects.filter(id=address_id, user=user, type=address_type).update(default=True)
+
 class Order(models.Model):
     # Status choices
     STATUS_CHOICES = [
