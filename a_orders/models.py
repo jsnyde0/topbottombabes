@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Sum, F
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
@@ -8,6 +8,7 @@ from a_cart.models import Cart
 
 class Address(models.Model):
     TYPE_CHOICES = [('SHIPPING', 'Shipping'), ('BILLING', 'Billing')]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     type = models.CharField(max_length=20, choices=TYPE_CHOICES)
     street = models.CharField(max_length=255)
@@ -20,8 +21,12 @@ class Address(models.Model):
     class Meta:
         unique_together = ['user', 'type', 'default']
 
+    def __str__(self):
+        return f"{self.get_type_display()} address for {self.user or 'Anonymous'}"
+
+    @transaction.atomic
     def save(self, *args, **kwargs):
-        if self.default:
+        if self.default and self.user:
             # Set all other addresses of this type for this user to non-default
             Address.objects.filter(user=self.user, type=self.type).update(default=False)
         super().save(*args, **kwargs)
@@ -31,6 +36,7 @@ class Address(models.Model):
         return cls.objects.filter(user=user, type=address_type, default=True).first()
 
     @classmethod
+    @transaction.atomic
     def set_default(cls, address_id, user, address_type):
         cls.objects.filter(user=user, type=address_type).update(default=False)
         cls.objects.filter(id=address_id, user=user, type=address_type).update(default=True)
@@ -56,6 +62,8 @@ class Order(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='orders')
+    shipping_address = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='shipping_orders', null=True, blank=True)
+    billing_address = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='billing_orders', null=True, blank=True)
     order_number = models.CharField(max_length=6, unique=True, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -63,18 +71,6 @@ class Order(models.Model):
     total_price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))], null=True, blank=True)
     payment_method = models.CharField(max_length=20, choices=PAYMENT_CHOICES, null=True, blank=True)
     payment_id = models.CharField(max_length=100, blank=True, null=True)  # For storing payment gateway transaction ID
-    
-    # Shipping information
-    shipping_address = models.TextField()
-    shipping_city = models.CharField(max_length=100)
-    shipping_country = models.CharField(max_length=100)
-    shipping_zip = models.CharField(max_length=20)
-
-    # Billing information (if different from shipping)
-    billing_address = models.TextField(blank=True, null=True)
-    billing_city = models.CharField(max_length=100, blank=True, null=True)
-    billing_country = models.CharField(max_length=100, blank=True, null=True)
-    billing_zip = models.CharField(max_length=20, blank=True, null=True)
 
     # Additional fields
     notes = models.TextField(blank=True, null=True)  # For customer or admin notes
