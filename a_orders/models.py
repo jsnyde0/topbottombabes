@@ -131,9 +131,8 @@ class Order(models.Model):
         self.save(update_fields=['total_price'])
 
     @classmethod
-    def create_order_from_request(cls, request, sync_with_cart=True, shipping_address=None, billing_address=None):
-        cart, _ = Cart.get_or_create_cart(request)
-        
+    def get_or_create_from_request(cls, request, sync_with_cart=True, shipping_address=None, billing_address=None):
+        cart, _ = Cart.get_or_create_from_request(request)
         
         if request.user.is_authenticated:
             # retrieve any 'pending' order for an authenticated user or create one
@@ -170,7 +169,7 @@ class Order(models.Model):
             order.billing_address = billing_address
             order.save()
 
-        return order
+        return order, created
     
 
 

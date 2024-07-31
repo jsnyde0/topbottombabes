@@ -21,7 +21,7 @@ class Cart(models.Model):
         ]
 
     @classmethod
-    def get_or_create_cart(cls, request):
+    def get_or_create_from_request(cls, request):
         """
         Get an existing cart or create a new one for the given request.
 

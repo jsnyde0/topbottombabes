@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 def view_list(request):
     # use custom 'filter_by_params' to filter the products on request.GET search parameters
     products = Product.objects.filter_by_params(**request.GET)
-    cart, created = Cart.get_or_create_cart(request)
+    cart, created = Cart.get_or_create_from_request(request)
  
 
     context = {'products': products, 'cart': cart}
