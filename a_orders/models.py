@@ -11,6 +11,8 @@ class Address(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     type = models.CharField(max_length=20, choices=TYPE_CHOICES)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
     street = models.CharField(max_length=255)
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100, blank=True, null=True)

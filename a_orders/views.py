@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Order
 from a_cart.models import Cart
-from .forms import ContactForm
+from .forms import ContactForm, ShippingForm
 import logging
 
 logger = logging.getLogger(__name__)
@@ -18,3 +18,13 @@ def checkout_contact(request):
     form = ContactForm()
     context = {'order': order, 'form': form}
     return render(request, 'orders/checkout_contact.html', context)
+
+def checkout_shipping(request):
+    # get the order
+    order, created = Order.get_or_create_from_request(request, sync_with_cart=False)
+    if created:
+        logger.warning(f"Created a new order in checkout shipping step; this shouldn't happen!")
+
+    form = ShippingForm()
+    context = {'order': order, 'form': form}
+    return render(request, 'orders/checkout_shipping.html', context)

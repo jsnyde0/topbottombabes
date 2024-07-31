@@ -91,6 +91,7 @@ INSTALLED_APPS = [
     'django_cotton',
     'allauth',
     'allauth.account',
+    'widget_tweaks',
     # 'template_partials',
     # own apps
     'a_core',

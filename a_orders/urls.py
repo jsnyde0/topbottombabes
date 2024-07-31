@@ -21,5 +21,6 @@ from . import views
 app_name = 'orders'
 
 urlpatterns = [
-    path('checkout/', views.checkout_contact, name='checkout_contact'),
+    path('checkout/contact/', views.checkout_contact, name='checkout_contact'),
+    path('checkout/shipping/', views.checkout_shipping, name='checkout_shipping'),
 ]
