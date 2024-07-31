@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Order
 from a_cart.models import Cart
-from .forms import ContactForm, ShippingForm
+from .forms import ContactForm, ShippingForm, PaymentForm
 import logging
 
 logger = logging.getLogger(__name__)
@@ -28,3 +28,12 @@ def checkout_shipping(request):
     form = ShippingForm()
     context = {'order': order, 'form': form}
     return render(request, 'orders/checkout_shipping.html', context)
+
+def checkout_payment(request):
+    order, created = Order.get_or_create_from_request(request, sync_with_cart=False)
+    if created:
+        logger.warning(f"Created a new order in checkout payment step; this shouldn't happen!")
+
+    form = PaymentForm()
+    context = {'order': order, 'form': form}
+    return render(request, 'orders/checkout_payment.html', context)

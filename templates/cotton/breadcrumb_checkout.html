@@ -9,6 +9,8 @@
         <li class="{% if active_step == 'shipping' %}font-semibold{% endif %}">
             <a href="{% url 'orders:checkout_shipping' %}">Shipping</a>
         </li>
-        <li class="{% if active_step == 'payment' %}font-semibold{% endif %}">Payment</li>
+        <li class="{% if active_step == 'payment' %}font-semibold{% endif %}">
+            <a href="{% url 'orders:checkout_payment' %}">Payment</a>
+        </li>
     </ul>
 </div>
