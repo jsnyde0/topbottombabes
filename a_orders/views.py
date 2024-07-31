@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import Order
+from .models import Order, Address
 from a_cart.models import Cart
-from .forms import ContactForm, ShippingForm, PaymentForm
+from .forms import ContactForm, AddressForm, PaymentForm
 import logging
 
 logger = logging.getLogger(__name__)
@@ -28,7 +28,21 @@ def checkout_shipping(request):
     if created:
         logger.warning(f"Created a new order in checkout shipping step; this shouldn't happen!")
 
-    form = ShippingForm()
+    form = AddressForm(request.POST or None, instance=order.shipping_address)
+    if form.is_valid():
+        shipping_address = form.save(commit=False)
+        shipping_address.type = 'Shipping'
+
+        if request.user.is_authenticated:
+            shipping_address.user = request.user
+
+        shipping_address.save()
+
+        order.shipping_address = shipping_address
+        order.save()
+
+        return redirect('orders:checkout_payment')
+    
     context = {'order': order, 'form': form}
     return render(request, 'orders/checkout_shipping.html', context)
 

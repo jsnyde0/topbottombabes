@@ -22,14 +22,6 @@ class ContactForm(forms.ModelForm):
 class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
-        fields = ['first_name', 'last_name', 'street', 'city', 'state', 'country', 'zip_code']
-        labels = {
-            'zip_code': 'ZIP Code'
-        }
-
-class ShippingForm(forms.ModelForm):
-    class Meta:
-        model = Address
         fields = ['first_name', 'last_name', 'street', 'zip_code', 'city', 'state', 'country']
         labels = {
             'zip_code': 'ZIP Code'
