@@ -1,0 +1,10 @@
+<div class="text-sm breadcrumbs mb-8">
+    <ul>
+        <li class="{% if active_step == 'cart' %}font-semibold{% endif %}">
+            <a href="{% url 'cart:view_cart' %}">Cart</a>
+        </li>
+        <li class="{% if active_step == 'information' %}font-semibold{% endif %}">Information</li>
+        <li class="{% if active_step == 'shipping' %}font-semibold{% endif %}">Shipping</li>
+        <li class="{% if active_step == 'payment' %}font-semibold{% endif %}">Payment</li>
+    </ul>
+</div>
