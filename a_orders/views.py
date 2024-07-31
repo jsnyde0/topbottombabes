@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Order
 from a_cart.models import Cart
+from .forms import ContactForm
 import logging
 
 logger = logging.getLogger(__name__)
@@ -14,5 +15,6 @@ def checkout_contact(request):
     
     # get or create an order and sync it with the cart
     order, _ = Order.get_or_create_from_request(request, sync_with_cart=True)
-    context = {'order': order}
+    form = ContactForm()
+    context = {'order': order, 'form': form}
     return render(request, 'orders/checkout_contact.html', context)
