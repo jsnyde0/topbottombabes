@@ -72,6 +72,11 @@ class Order(models.Model):
     payment_method = models.CharField(max_length=20, choices=PAYMENT_CHOICES, null=True, blank=True)
     payment_id = models.CharField(max_length=100, blank=True, null=True)  # For storing payment gateway transaction ID
 
+    # contact fields
+    email = models.EmailField(null=True, blank=True, default='')
+    phone = models.CharField(max_length=20, null=True, blank=True, default='')
+    marketing_consent = models.BooleanField(default=False)
+    
     # Additional fields
     notes = models.TextField(blank=True, null=True)  # For customer or admin notes
     tracking_number = models.CharField(max_length=100, blank=True, null=True)
