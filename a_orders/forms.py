@@ -6,13 +6,9 @@ class ContactForm(forms.ModelForm):
         model = Order
         fields = ['email', 'phone', 'marketing_consent']
         widgets = {
-            'email': forms.EmailInput(attrs={'class': 'input input-bordered', 'placeholder': 'Email'}),
-            'phone': forms.TextInput(attrs={'class': 'input input-bordered', 'placeholder': 'Phone'}),
             'marketing_consent': forms.CheckboxInput(attrs={'class': 'checkbox'}),
         }
         labels = {
-            'email': 'Email',
-            'phone': 'Phone',
             'marketing_consent': 'I agree to receive marketing emails',
         }
 
