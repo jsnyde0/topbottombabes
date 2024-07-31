@@ -1,0 +1,30 @@
+{% load custom_filters%}
+
+<div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+        <h2 class="card-title mb-6">Order Summary</h2>
+        <div class="divide-y">
+            {% for item in order.items.all %}
+                <div class="py-4 flex justify-between items-center">
+                    <div class="flex items-center justify-between">
+                        <img src="{{ item.product.get_primary_image.get_url }}"
+                             alt="{{ item.product.name }}"
+                             class="w-16 h-16 object-cover rounded-md mr-4"
+                             height="64"
+                             width="64">
+                        <div class="flex-1">
+                            <h3 class="font-semibold">{{ item.product.name }}</h3>
+                            <p class="text-sm text-gray-600">Quantity: {{ item.quantity }}</p>
+                        </div>
+                    </div>
+                    <p class="font-semibold text-right ml-4">{{ item.total_price|euro_symbol }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="divider my-4"></div>
+        <div class="flex justify-between items-center">
+            <p class="text-lg font-semibold">Total</p>
+            <p class="text-lg font-semibold">{{ order.total_price|euro_symbol }}</p>
+        </div>
+    </div>
+</div>
