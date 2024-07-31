@@ -36,7 +36,7 @@ class OrderItemInline(admin.TabularInline):
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('order_number', 'user', 'status', 'total_price', 'created_at')
     list_filter = ('status', 'payment_method', 'created_at')
-    search_fields = ('order_number', 'user', 'user__email', 'shipping_address')
+    search_fields = ('order_number', 'user', 'user__email')
     readonly_fields = ('order_number', 'user', 'created_at', 'updated_at', 'total_price')
     inlines = [OrderItemInline]
     fieldsets = (
@@ -47,10 +47,10 @@ class OrderAdmin(admin.ModelAdmin):
             'fields': ('created_at', 'updated_at', 'estimated_delivery')
         }),
         ('Shipping Information', {
-            'fields': ('shipping_address', 'shipping_city', 'shipping_country', 'shipping_zip')
+            'fields': ('shipping_address',)
         }),
         ('Billing Information', {
-            'fields': ('billing_address', 'billing_city', 'billing_country', 'billing_zip'),
+            'fields': ('billing_address',),
             'classes': ('collapse',)
         }),
         ('Additional Information', {
