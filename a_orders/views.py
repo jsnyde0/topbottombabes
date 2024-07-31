@@ -15,7 +15,10 @@ def checkout_contact(request):
     
     # get or create an order and sync it with the cart
     order, _ = Order.get_or_create_from_request(request, sync_with_cart=True)
-    form = ContactForm()
+    form = ContactForm(request.POST or None, instance=order)
+    if form.is_valid():
+        form.save()
+        return redirect('orders:checkout_shipping')
     context = {'order': order, 'form': form}
     return render(request, 'orders/checkout_contact.html', context)
 
@@ -34,6 +37,6 @@ def checkout_payment(request):
     if created:
         logger.warning(f"Created a new order in checkout payment step; this shouldn't happen!")
 
-    form = PaymentForm()
+    form = PaymentForm(request.POST or None, instance=order)
     context = {'order': order, 'form': form}
     return render(request, 'orders/checkout_payment.html', context)
