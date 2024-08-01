@@ -28,28 +28,6 @@ class AddressForm(forms.ModelForm):
         }
 
 class PaymentForm(forms.ModelForm):
-    use_shipping_address = forms.BooleanField(required=False, initial=True, label='Use shipping address as billing address')
-
     class Meta:
         model = Order
         fields = ['payment_method']
-        # widgets = {
-        #     'use_shipping_address': forms.CheckboxInput(attrs={'class': 'checkbox checkbox-primary'}),
-        # }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.billing_address_form = AddressForm(prefix='billing')
-        self.fields.update(self.billing_address_form.fields)
-
-    def clean(self):
-        cleaned_data = super().clean()
-        if not cleaned_data.get('use_shipping_address'):
-            billing_form = AddressForm(self.data, prefix='billing')
-            if billing_form.is_valid():
-                cleaned_data.update(billing_form.cleaned_data)
-            else:
-                for field, errors in billing_form.errors.items():
-                    for error in errors:
-                        self.add_error(f'billing-{field}', error)
-        return cleaned_data

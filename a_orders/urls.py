@@ -23,5 +23,6 @@ app_name = 'orders'
 urlpatterns = [
     path('checkout/contact/', views.checkout_contact, name='checkout_contact'),
     path('checkout/shipping/', views.checkout_shipping, name='checkout_shipping'),
+    path('checkout/billing/', views.checkout_billing, name='checkout_billing'),
     path('checkout/payment/', views.checkout_payment, name='checkout_payment'),
 ]
