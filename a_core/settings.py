@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from environ import Env
+import stripe
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -232,3 +233,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY')
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
 # STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
+
+# Initialize Stripe
+stripe.api_key = STRIPE_SECRET_KEY

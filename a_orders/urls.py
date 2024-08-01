@@ -25,4 +25,6 @@ urlpatterns = [
     path('checkout/shipping/', views.checkout_shipping, name='checkout_shipping'),
     path('checkout/billing/', views.checkout_billing, name='checkout_billing'),
     path('checkout/payment/', views.checkout_payment, name='checkout_payment'),
+    path('create-payment-intent/', views.create_payment_intent, name='create_payment_intent'),
+    path('payment-success/', views.payment_success, name='payment_success'),
 ]

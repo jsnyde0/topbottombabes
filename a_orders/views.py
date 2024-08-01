@@ -1,8 +1,13 @@
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 from .models import Order, Address
 from a_cart.models import Cart
 from .forms import ContactForm, AddressForm, PaymentForm
 import logging
+import stripe
 
 logger = logging.getLogger(__name__)
 
@@ -85,5 +90,31 @@ def checkout_payment(request):
         logger.warning(f"Created a new order in checkout payment step; this shouldn't happen!")
 
     form = PaymentForm(request.POST or None, instance=order)
-    context = {'order': order, 'form': form}
+    context = {
+        'order': order,
+        'form': form,
+        'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY
+    }
     return render(request, 'orders/checkout_payment.html', context)
+
+@require_http_methods(['POST'])
+@csrf_exempt
+def create_payment_intent(request):
+    try:
+        order, _ = Order.get_or_create_from_request(request, sync_with_cart=False)
+        intent = stripe.PaymentIntent.create(
+            amount=int(order.total_price * 100),  # Stripe expects amounts in cents
+            currency='eur',
+            automatic_payment_methods={
+                'enabled': True,
+            },
+        )
+        return JsonResponse({
+            'clientSecret': intent['client_secret']
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=403)
+    
+def payment_success(request):
+    # Here you would typically update the order status, clear the cart, etc.
+    return render(request, 'orders/payment_success.html')
