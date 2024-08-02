@@ -99,6 +99,10 @@ def checkout_billing(request):
         order.billing_address = billing_address
         order.save()
 
+        if request.htmx:
+            context = {'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY}
+            return render(request, 'orders/partials/payment_form.html', context)
+
         return redirect('orders:checkout_payment')
     
     context = {'order': order, 'form': form}
