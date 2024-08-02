@@ -20,69 +20,7 @@
             <tbody>
                 <!-- row 1 -->
                 {% for item in cart.items.all %}
-                    <tr>
-                        <td>
-                            <div class="flex items-center gap-3">
-                                <div class="avatar">
-                                    <div class="mask mask-squircle h-12 w-12">
-                                        <c-hover-image
-                                        :primary-image="item.product.get_primary_image"
-                                        :secondary-image="item.product.get_secondary_image"
-                                        width="48"
-                                        height="48" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="font-bold">{{ item.product.name }}</div>
-                                    <div class="text-sm opacity-50">{{ item.product.description|truncatechars:30 }}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="title-font font-medium text-2xl">{{ item.product.price|euro_symbol }}</span>
-                        </td>
-                        <td>
-                            <form id="update-form-{{ item.product.id }}"
-                                  class="flex items-center"
-                                  method="post"
-                                  action="{% url 'cart:update_quantity' %}"
-                                  hx-post="{% url 'cart:update_quantity' %}"
-                                  hx-trigger="change from:input[name='quantity']"
-                                  hx-target="#cart-content"
-                                  hx-swap="outerHTML">
-                                {% csrf_token %}
-                                <input type="hidden" name="product_id" value="{{ item.product.id }}">
-                                <input type="number"
-                                       name="quantity"
-                                       value="{{ item.quantity }}"
-                                       min="1"
-                                       class="input input-bordered input-xs w-14 text-center mx-1">
-                                {% comment %} <button type="submit" class="btn btn-primary btn-xs ml-2">Update</button> {% endcomment %}
-                            </form>
-                        </td>
-                        <th>
-                            <span class="title-font font-medium text-2xl">{{ item.get_total_price|euro_symbol }}</span>
-                        </th>
-                        <td>
-                            <form method="post"
-                                  action="{% url 'cart:remove_from_cart' %}"
-                                  hx-post="{% url 'cart:remove_from_cart' %}"
-                                  hx-target="#cart-content"
-                                  hx-swap="outerHTML">
-                                {% csrf_token %}
-                                <input type="hidden" name="product_id" value="{{ item.product.id }}">
-                                <button type="submit" class="btn btn-ghost btn-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                         class="h-5 w-5"
-                                         fill="none"
-                                         viewBox="0 0 24 24"
-                                         stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
+                    <c-cart-row :item="{{ item }}" />
                 {% empty %}
                     <tr>
                         <td colspan="5" class="text-center">Your cart is empty</td>

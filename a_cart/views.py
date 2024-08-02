@@ -35,7 +35,9 @@ def update_quantity(request):
     cart, created = Cart.get_or_create_from_request(request)
     product_id = request.POST.get('product_id')
     quantity = int(request.POST.get('quantity', 1))
+    print(f"Updating quantity for product {product_id} to {quantity}")
     cart.update_quantity(product_id, quantity)
     if request.htmx:
-        return render(request, 'cart/cart_content.html', {'cart': cart})
+        updated_item = cart.items.get(product_id=product_id)
+        return render(request, 'cart/partials/cart_row.html', {'item': updated_item})
     return render(request, 'cart/cart.html', {'cart': cart})
