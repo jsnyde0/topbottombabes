@@ -1,21 +1,9 @@
 {% extends "layouts/checkout.html" %}
-{% load custom_filters %}
-{% load widget_tweaks %}
-{% block content %}
-  <div class="container mx-auto px-4 py-8">
-    <!-- Breadcrumbs -->
-    <c-breadcrumb-checkout active_step="billing" />
 
-    <div class="flex flex-col lg:flex-row gap-8">
-      <!-- Billing Form -->
-      <div class="lg:w-2/3">
-        <c-checkout-billing-form />
-      </div>
-      <!-- Order Summary -->
-      <div class="lg:w-1/3">
-        <c-order-summary />
-      </div>
-    </div>
-  </div>
+{% block breadcrumb %}
+  <c-breadcrumb-checkout active_step="billing" />
+{% endblock breadcrumb %}
 
-{% endblock content %}
+{% block checkout_form %}
+  <c-checkout-billing-form />
+{% endblock checkout_form %}
