@@ -85,6 +85,9 @@ def checkout_billing(request):
         if use_shipping_address:
             order.billing_address = order.shipping_address
             order.save()
+            if request.htmx:
+                context = {'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY}
+                return render(request, 'orders/partials/payment_form.html', context)
             return redirect('orders:checkout_payment')
 
     if form.is_valid():
