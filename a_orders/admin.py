@@ -34,14 +34,17 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('order_number', 'user', 'status', 'total_price', 'created_at', 'email', 'phone')
-    list_filter = ('status', 'created_at')
-    search_fields = ('order_number', 'user', 'user__email', 'email', 'phone')
-    readonly_fields = ('order_number', 'user', 'created_at', 'updated_at', 'total_price')
+    list_display = ('order_number', 'user', 'status', 'total_price', 'created_at', 'email', 'phone', 'payment_status', 'payment_amount')
+    list_filter = ('status', 'payment_status', 'created_at')
+    search_fields = ('order_number', 'user', 'user__email', 'email', 'phone', 'payment_intent_id')
+    readonly_fields = ('order_number', 'user', 'created_at', 'updated_at', 'total_price', 'payment_status', 'payment_intent_id', 'payment_amount')
     inlines = [OrderItemInline]
     fieldsets = (
         ('Order Info', {
-            'fields': ('order_number', 'user', 'status', 'total_price', 'payment_id')
+            'fields': ('order_number', 'user', 'status', 'total_price')
+        }),
+        ('Payment Information', {
+            'fields': ('payment_status', 'payment_intent_id', 'payment_amount')
         }),
         ('Contact Information', {
             'fields': ('email', 'phone', 'marketing_consent')

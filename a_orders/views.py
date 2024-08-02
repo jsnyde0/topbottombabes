@@ -107,6 +107,9 @@ def create_payment_intent(request):
                 'enabled': True,
             },
         )
+        order.payment_intent_id = intent['id']
+        order.payment_amount = order.total_price
+        order.save()
         return JsonResponse({
             'clientSecret': intent['client_secret']
         })
