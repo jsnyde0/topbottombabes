@@ -32,7 +32,6 @@ def checkout_contact(request):
         # If it's an HTMX request, return the shipping form partial
         if request.htmx:
             shipping_form = AddressForm(instance=order.shipping_address)
-            print("Shipping form errors:", shipping_form.errors)  # Add this line
             context = {'form': shipping_form}
             return render(request, 'orders/partials/shipping_form.html', context)
         
@@ -61,6 +60,11 @@ def checkout_shipping(request):
 
         order.shipping_address = shipping_address
         order.save()
+
+        if request.htmx:
+            billing_form = AddressForm(instance=order.billing_address)
+            context = {'form': billing_form}
+            return render(request, 'orders/partials/billing_form.html', context)
 
         return redirect('orders:checkout_billing')
     
