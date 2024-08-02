@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
+from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
@@ -33,7 +34,9 @@ def checkout_contact(request):
         if request.htmx:
             shipping_form = AddressForm(instance=order.shipping_address)
             context = {'form': shipping_form}
-            return render(request, 'orders/partials/shipping_form.html', context)
+            response = render(request, 'orders/partials/shipping_form.html', context)
+            response['HX-Push'] = reverse('orders:checkout_shipping')  # Add this line
+            return response
         
         # For non-HTMX requests, redirect to the next step
         return redirect('orders:checkout_shipping')
@@ -64,7 +67,9 @@ def checkout_shipping(request):
         if request.htmx:
             billing_form = AddressForm(instance=order.billing_address)
             context = {'form': billing_form}
-            return render(request, 'orders/partials/billing_form.html', context)
+            response = render(request, 'orders/partials/billing_form.html', context)
+            response['HX-Push'] = reverse('orders:checkout_billing')  # Add this line
+            return response
 
         return redirect('orders:checkout_billing')
     
@@ -87,7 +92,9 @@ def checkout_billing(request):
             order.save()
             if request.htmx:
                 context = {'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY}
-                return render(request, 'orders/partials/payment_form.html', context)
+                response = render(request, 'orders/partials/payment_form.html', context)
+                response['HX-Push'] = reverse('orders:checkout_payment')  # Add this line
+                return response
             return redirect('orders:checkout_payment')
 
     if form.is_valid():
@@ -104,7 +111,9 @@ def checkout_billing(request):
 
         if request.htmx:
             context = {'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY}
-            return render(request, 'orders/partials/payment_form.html', context)
+            response = render(request, 'orders/partials/payment_form.html', context)
+            response['HX-Push'] = reverse('orders:checkout_payment')  # Add this line
+            return response
 
         return redirect('orders:checkout_payment')
     
