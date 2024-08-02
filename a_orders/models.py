@@ -126,27 +126,40 @@ class Order(models.Model):
             super().save(update_fields=['total_price'])
 
     def sync_with_cart(self, cart):
-        # Clear existing order items
-        self.items.all().delete()
-
-        # Add items from cart
+        # Get existing order items
+        existing_items = {item.product_id: item for item in self.items.all()}
+        
+        # Update or create items
+        updated_product_ids = set()
         for cart_item in cart.items.all():
-            OrderItem.objects.create(
-                order=self,
-                product=cart_item.product,
-                quantity=cart_item.quantity,
-                price=cart_item.product.price,
-                name=cart_item.product.name,
-                description=cart_item.product.description
-            )
+            if cart_item.product_id in existing_items:
+                # Update existing item
+                order_item = existing_items[cart_item.product_id]
+                order_item.quantity = cart_item.quantity
+                order_item.price = cart_item.product.price
+                order_item.save()
+            else:
+                # Create new item
+                OrderItem.objects.create(
+                    order=self,
+                    product=cart_item.product,
+                    quantity=cart_item.quantity,
+                    price=cart_item.product.price,
+                    name=cart_item.product.name,
+                    description=cart_item.product.description
+                )
+            updated_product_ids.add(cart_item.product_id)
+        
+        # Delete items no longer in cart
+        items_to_delete = set(existing_items.keys()) - updated_product_ids
+        self.items.filter(product_id__in=items_to_delete).delete()
 
         # Recompute total price
         self.compute_total_price()
         self.save(update_fields=['total_price'])
 
     @classmethod
-    def get_or_create_from_request(cls, request, sync_with_cart=True, shipping_address=None, billing_address=None):
-        cart, _ = Cart.get_or_create_from_request(request)
+    def get_or_create_from_request(cls, request, shipping_address=None, billing_address=None):
         
         if request.user.is_authenticated:
             # retrieve any 'pending' order for an authenticated user or create one
@@ -170,10 +183,6 @@ class Order(models.Model):
                 created = True
             
             request.session['order_id'] = order.id
-
-        # sync the order with the cart
-        if sync_with_cart:
-            order.sync_with_cart(cart)
 
         if shipping_address:
             order.shipping_address = shipping_address

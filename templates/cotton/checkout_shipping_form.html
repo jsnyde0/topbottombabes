@@ -1,0 +1,25 @@
+{% load widget_tweaks %}
+
+<div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+        <h2 class="card-title mb-6">Shipping Address</h2>
+        <form method="post"
+              hx-post="{% url 'orders:checkout_shipping' %}"
+              hx-target="#checkout_form"
+              hx-swap="innerHTML">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-control mb-4">
+                    <label class="label" for="{{ field.id_for_label }}">
+                        <span class="label-text">{{ field.label }}</span>
+                    </label>
+                    {{ field|add_class:"input input-bordered" }}
+                    {% if field.errors %}<div class="text-error mt-1">{{ field.errors.0 }}</div>{% endif %}
+                </div>
+            {% endfor %}
+            <div class="form-control mt-6">
+                <button type="submit" class="btn btn-primary">Continue to payment</button>
+            </div>
+        </form>
+    </div>
+</div>
