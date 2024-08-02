@@ -1,0 +1,9 @@
+{% load custom_filters %}
+
+<tr id="cart_summary" hx-swap-oob="true">
+    <th>TOTAL</th>
+    <th></th>
+    <th>{{ num_items }}</th>
+    <th>{{ total_price|euro_symbol }}</th>
+    <th></th>
+</tr>

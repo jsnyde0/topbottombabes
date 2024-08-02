@@ -39,5 +39,8 @@ def update_quantity(request):
     cart.update_quantity(product_id, quantity)
     if request.htmx:
         updated_item = cart.items.get(product_id=product_id)
-        return render(request, 'cart/partials/cart_row.html', {'item': updated_item})
+        num_items = cart.get_num_items()
+        total_price = cart.get_total_price()
+        context = {'item': updated_item, 'num_items': num_items, 'total_price': total_price}
+        return render(request, 'cart/partials/cart_row.html', context)
     return render(request, 'cart/cart.html', {'cart': cart})
