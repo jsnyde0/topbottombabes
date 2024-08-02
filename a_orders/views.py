@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from .models import Order, Address
 from a_cart.models import Cart
-from .forms import ContactForm, AddressForm, PaymentForm
+from .forms import ContactForm, AddressForm
 import logging
 import stripe
 
@@ -89,10 +89,8 @@ def checkout_payment(request):
     if created:
         logger.warning(f"Created a new order in checkout payment step; this shouldn't happen!")
 
-    form = PaymentForm(request.POST or None, instance=order)
     context = {
         'order': order,
-        'form': form,
         'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY
     }
     return render(request, 'orders/checkout_payment.html', context)

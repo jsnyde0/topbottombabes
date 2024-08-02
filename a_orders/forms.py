@@ -26,8 +26,3 @@ class AddressForm(forms.ModelForm):
         labels = {
             'zip_code': 'ZIP Code'
         }
-
-class PaymentForm(forms.ModelForm):
-    class Meta:
-        model = Order
-        fields = ['payment_method']

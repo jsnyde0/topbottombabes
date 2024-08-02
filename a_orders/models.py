@@ -71,8 +71,15 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))], null=True, blank=True)
-    payment_method = models.CharField(max_length=20, choices=PAYMENT_CHOICES, null=True, blank=True)
-    payment_id = models.CharField(max_length=100, blank=True, null=True)  # For storing payment gateway transaction ID
+    
+    # Stripe payment fields
+    payment_intent_id = models.CharField(max_length=255, blank=True, null=True)
+    payment_status = models.CharField(max_length=20, choices=[
+        ('PENDING', 'Pending'),
+        ('PAID', 'Paid'),
+        ('FAILED', 'Failed'),
+    ], default='PENDING')
+    payment_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     # contact fields
     email = models.EmailField(null=True, blank=True, default='')
