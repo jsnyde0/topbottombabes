@@ -4,7 +4,7 @@
     <div class="card-body">
         <h2 class="card-title mb-6">Billing Address</h2>
         <form method="post"
-              hx-post="{% url 'orders:checkout_contact' %}"
+              hx-post="{% url 'orders:checkout_billing' %}"
               hx-target="#checkout_form"
               hx-swap="innerHTML">
             {% csrf_token %}
